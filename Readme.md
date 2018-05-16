@@ -2,8 +2,7 @@
 
 ## Description
 
-...
-
+A neat little web application that manages the sale and stock of drinks and sweets. It is designed to run on a single machine, all users are expected to be trusted and "well behaved". It was meant to have (at least) the same feature set as the paper tally sheet, which it replaced.
 
 ## Installation
 
