@@ -6,59 +6,30 @@ A neat little web application that manages the sale and stock of drinks and swee
 
 ## Installation
 
+Install dependencies:
 
-### Install Flask
+    $ pip install -U Flask
+    $ pip install -U Pillow
 
-Have a look at the installation instructions at the [Flask website](http://flask.pocoo.org/docs/0.10/installation/). The most important steps are listed here.
+[Download](https://github.com/FSI-CE/fsikasse/archive/master.zip) and extract fsikasse or clone the git repository.
 
-On MacOS X or GNU/Linux, run one of the following:
+    $ git clone https://github.com/FSI-CE/fsikasse.git
+    $ cd fsikasse
 
-    $ sudo pip install virtualenv
+Setup fsikasse:
 
-or
+    $ FLASK_APP=fsikasse.py flask initdb
 
-    $ sudo easy_install virtualenv
+From now on it is sufficient to start fsikasse with:
 
-On Ubuntu, you can use
+    $ FLASK_APP=fsikasse.py flask run
 
-    $ sudo apt-get install python-virtualenv
+## Update (experimental)
 
-Get and activate the latest flask version:
+If you have cloned the repository, you can run the following commands to update the fsikasse:
 
-    $ git clone http://github.com/mitsuhiko/flask.git
-    Cloning into 'flask'...
-    ...
-    $ cd flask
-    $ virtualenv venv --distribute
-    New python executable in venv/bin/python
-    Installing distribute............done.
-    $ . venv/bin/activate
-    $ python setup.py develop
-    ...
-    Finished processing dependencies for Flask
+    $ pip install -U Flask
+    $ pip install -U Pillow
+    $ git pull
 
-### Dependencies
-
-Install [Pillow](https://pypi.python.org/pypi/Pillow/2.1.0)
-
-    $ pip install Pillow
-
-### Install FSI-Kasse
-
-Download and extract fsikasse or clone the git repository.
-
-To initialize the database, run in the fsikasse-directory
-
-    $ flask --app=fsikasse initdb 
-
-And start the app with
-
-    $ flask --app=fsikasse run                
-
-From now on, it is sufficient to run in the flask-directory
-
-    $ . venv/bin/activate
-
-and then start the app in the fsikasse-directory with
-
-    $ flask --app=fsikasse run
+Don't forget the restart flask.
