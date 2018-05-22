@@ -366,7 +366,7 @@ def collect_money(username):
         abort(404)
 
     if request.method == 'GET':
-        cur.execute('SELECT name, account_id FROM user WHERE active=1 and direct_payment=0 and name!=? ORDER BY name', [username])
+        cur.execute('SELECT name FROM user WHERE active=1 and direct_payment=0 and name!=? ORDER BY name', [username])
         users = cur.fetchall()
         return render_template('user_collect.html', title="Einsammeln " + user['name'], user=user, users=users, return_to_userpage=True)
     
@@ -375,23 +375,25 @@ def collect_money(username):
         if len(to_users) == 0:
             flash(u'You need to specify some people.')
             return redirect(url_for('show_index'))
-        amount = int(float(request.form['amount'])*100 / (len(to_users)+1) + 0.5)
+        amount = int(float(request.form['amount'])*100 / len(to_users) + 0.5)
         if amount <= 0.0:
             flash(u'Keine Transaktion durchgeführt.')
             return redirect(url_for('show_index'))
 
         # check all account_id
-        sql='SELECT account_id FROM user WHERE active=1 and direct_payment=0 and account_id IN (%s)' 
+        sql='SELECT account_id FROM user WHERE active=1 and direct_payment=0 and name IN (%s)' 
         in_p = ', '.join(['?']*len(to_users))
         sql = sql % in_p
         cur.execute(sql, to_users)
-        if len(cur.fetchall()) != len(to_users):
+        user_ids = cur.fetchall()
+        if len(user_ids) != len(to_users):
             abort(403)
         
         cur.execute('INSERT INTO `transaction` (comment, datetime) VALUES (?, ?)', ["Einsammeln von " + request.form['comment'], datetime.now()])
         transaction_id = cur.lastrowid
-        for to_user in to_users:
-            cur.execute('INSERT INTO transfer (from_id, to_id, valuable_id, amount, transaction_id) VALUES  (?, ?, ?, ?, ?)', [to_user, user['account_id'], app.config['MONEY_VALUABLE_ID'], amount, transaction_id])
+        for to_user in user_ids:
+            if to_user != user['account_id']:
+                cur.execute('INSERT INTO transfer (from_id, to_id, valuable_id, amount, transaction_id) VALUES  (?, ?, ?, ?, ?)', [to_user['account_id'], user['account_id'], app.config['MONEY_VALUABLE_ID'], amount, transaction_id])
         db.commit()
 
         flash('Geld wurde eingesammelt.')

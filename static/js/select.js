@@ -8,7 +8,7 @@ window.onmousedown = function (e) {
         else el.setAttribute('selected', '');
 
         // hack to correct buggy behavior
-        // var select = el.parentNode.cloneNode(true);
-        // el.parentNode.parentNode.replaceChild(select, el.parentNode);
+        var select = el.parentNode.cloneNode(true);
+        el.parentNode.parentNode.replaceChild(select, el.parentNode);
     }
 }

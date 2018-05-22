@@ -26,8 +26,9 @@
 
   <div class="users">
     <select multiple id="user_select" name="user_select">
+      <option value="{{user.name}}" selected>{{user.name}}</option>
       {% for u in users %}
-      <option value="{{ u.account_id }}">{{ u.name }}</option>
+      <option value="{{ u.name }}">{{ u.name }}</option>
       {% endfor %}
     </select>
   </div>
