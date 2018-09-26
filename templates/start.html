@@ -45,6 +45,11 @@
     {% for user in users %}
     <a href="{{ url_for('show_userpage', admin=admin_panel, username=user.name) }}">
       <div class="user">
+        <span class="user-prio">
+          {% if user.prio %}
+            {{ '%2.01f%%' % (user.prio / 10.0) }}
+          {% endif %}
+        </span>
         <span class="user-image">
           {% if user.image_path %}
           <img src="{{ url_for('static', filename=user.image_path) }}" />
