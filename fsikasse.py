@@ -16,6 +16,10 @@ import re
 import random
 import string
 from datetime import datetime
+import time
+import pandas as pd
+import matplotlib.pyplot as plt
+import calendar
 
 from flask import Flask, request, session, g, redirect, url_for, abort, \
      render_template, flash
@@ -623,6 +627,54 @@ def cancle_transaction(username, transaction_id):
 
     flash('Buchung wurde storniert.')
     return redirect(url_for('edit_userprofile', username=username))
+
+@app.route('/graphs')
+def graphs():
+    db = get_db()
+    df = pd.read_sql_query("""
+SELECT dt as date, count(dt) as amount
+FROM (SELECT substr(datetime,0,11) as dt FROM `transaction` INNER JOIN transfer ON `transaction`.rowid = transfer.transaction_id WHERE valuable_id!=1 AND to_id!=4)
+GROUP BY dt
+ORDER BY dt DESC
+LIMIT 365
+    """, db)
+
+    df['date'] = df['date'].astype('datetime64[D]')
+    df = df.resample('D', on='date').sum().reset_index()
+    df.plot(x='date', y='amount', figsize=[12.8, 4.8], label='', legend=False, title='Purchases per day (last 365 days)')
+    plt.gca().xaxis.label.set_visible(False)
+    plt.savefig('static/plots/year.svg', bbox_inches='tight')
+    plt.close()
+
+    df = df.groupby(df['date'].apply(lambda x: x.dayofweek)).sum().reset_index()
+    df['date'] = df['date'].apply(lambda x: calendar.day_abbr[x])
+    df['amount'] = df['amount'].apply(lambda x: x/df['amount'].sum())
+    df.set_index('date').plot.bar(rot=0, label='', legend=False, title='Purchases per week day')
+    plt.gca().xaxis.label.set_visible(False)
+    # manipulate
+    ax = plt.gca()
+    vals = ax.get_yticks()
+    ax.set_yticklabels(['{:,.2%}'.format(x) for x in vals])
+    plt.savefig('static/plots/week.svg', bbox_inches='tight')
+    plt.close()
+
+    df = pd.read_sql_query("""
+SELECT dt as date, count(dt) as amount
+FROM (SELECT substr(datetime,12,8) as dt FROM `transaction` INNER JOIN transfer ON `transaction`.rowid = transfer.transaction_id WHERE valuable_id!=1 AND to_id!=4)
+GROUP BY dt
+ORDER BY dt ASC
+    """, db)
+    df['date'] = df['date'].astype('datetime64')
+    df = df.resample('30T', on='date').sum().reset_index()
+    df['amount'] = df['amount'].apply(lambda x: x/df['amount'].sum())
+    df.plot(x='date', y='amount', label='', legend=False, title='Purchases per hour')
+    # manipulate
+    ax = plt.gca()
+    vals = ax.get_yticks()
+    ax.set_yticklabels(['{:,.2%}'.format(x) for x in vals])
+    plt.savefig('static/plots/hour.svg', bbox_inches='tight')
+    plt.close()
+    return render_template('graphs.html', title='Some graphs', rand=int(time.time()), return_to_index=True)
 
 if __name__ == '__main__':
     app.debug = True

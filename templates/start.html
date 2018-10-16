@@ -4,6 +4,15 @@
 <div class="main_wrapper" style="height:666px;" unselectable='on' onselectstart='return false;' onmousedown='return false;'>
 
 <div>
+  <a href="{{ url_for('graphs') }}">
+      <div class="user">
+        <span class="user-image">
+          <span class="new"><i class="fa fa-area-chart"></i></span>
+        </span>
+        <span class="name">Graphen</span>
+        <span class="balance"></span>
+      </div>
+    </a>
   {% if admin_panel %}
   <a href="{{ url_for('add_user', admin=admin_panel) }}">
     <div class="user">
