@@ -121,7 +121,7 @@ def admin_lagerbestand():
         cur = db.execute(
             'SELECT valuable_name, balance, unit_name FROM account_valuable_balance WHERE account_id=?', [app.config['STORAGE_ACCOUNT'][0]])
         balance = cur.fetchall()
-        return render_template('admin_lagerbestand.html', title="Übersicht " + app.config['STORAGE_ACCOUNT'][1], balance=balance)
+        return render_template('admin_lagerbestand.html', title="Übersicht " + app.config['STORAGE_ACCOUNT'][1], admin_panel=True, balance=balance)
 
     return redirect(url_for('admin_index'))
 
@@ -271,7 +271,7 @@ def admin_stats():
     db = get_db()
     if request.method == 'GET':
         cur = db.execute(
-            'SELECT `transaction`.rowid, comment, datetime, account_from.name AS from_name, from_id, account_to.name AS to_name, to_id, amount, valuable.unit_name, valuable.name AS valuable_name, valuable_id FROM `transaction` JOIN transfer ON `transaction`.rowid = transfer.transaction_id JOIN `valuable` ON transfer.valuable_id = valuable.rowid LEFT JOIN account AS account_from ON from_id = account_from.rowid LEFT JOIN account AS account_to ON to_id = account_to.rowid WHERE from_id = ? OR to_id = ?  ORDER BY strftime("%s", datetime) DESC',
+            'SELECT `transaction`.rowid, comment, datetime, account_from.name AS from_name, from_id, account_to.name AS to_name, to_id, amount, valuable.unit_name, valuable.name AS valuable_name, valuable_id FROM `transaction` JOIN transfer ON `transaction`.rowid = transfer.transaction_id JOIN `valuable` ON transfer.valuable_id = valuable.rowid LEFT JOIN account AS account_from ON from_id = account_from.rowid LEFT JOIN account AS account_to ON to_id = account_to.rowid WHERE from_id = ? OR to_id = ?  ORDER BY strftime("%s", datetime) DESC LIMIT 100',
             [app.config['STORAGE_ACCOUNT'][0], app.config['STORAGE_ACCOUNT'][0]])
         transactions = cur.fetchall()
         return render_template('admin_statistiken.html', title="Statistiken" + app.config['STORAGE_ACCOUNT'][1], transactions=transactions, admin_panel=True )
@@ -416,7 +416,7 @@ def edit_userprofile(username):
             [user['account_id']])
         balance = cur.fetchall()
         cur = db.execute(
-            'SELECT `transaction`.rowid, comment, datetime, account_from.name AS from_name, from_id, account_to.name AS to_name, to_id, amount, valuable.unit_name, valuable.name AS valuable_name, valuable_id FROM `transaction` JOIN transfer ON `transaction`.rowid = transfer.transaction_id JOIN `valuable` ON transfer.valuable_id = valuable.rowid LEFT JOIN account AS account_from ON from_id = account_from.rowid LEFT JOIN account AS account_to ON to_id = account_to.rowid WHERE from_id = ? OR to_id = ?  ORDER BY strftime("%s", datetime) DESC',
+            'SELECT `transaction`.rowid, comment, datetime, account_from.name AS from_name, from_id, account_to.name AS to_name, to_id, amount, valuable.unit_name, valuable.name AS valuable_name, valuable_id FROM `transaction` JOIN transfer ON `transaction`.rowid = transfer.transaction_id JOIN `valuable` ON transfer.valuable_id = valuable.rowid LEFT JOIN account AS account_from ON from_id = account_from.rowid LEFT JOIN account AS account_to ON to_id = account_to.rowid WHERE from_id = ? OR to_id = ?  ORDER BY strftime("%s", datetime) DESC LIMIT 25',
             [user['account_id'], user['account_id']])
         transactions = cur.fetchall()
         return render_template('user_profile.html', title="Benutzerprofil " + user['name'], user=user, transactions=transactions, balance=balance, return_to_userpage=True)
