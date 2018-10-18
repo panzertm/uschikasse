@@ -91,14 +91,7 @@ def allowed_file(filename):
 @app.route('/')
 def show_index():
     db = get_db()
-    db = db.execute(
-        """SELECT user.name AS name, image_path, balance, prio
-FROM user
-INNER JOIN account_valuable_balance AS avb ON user.account_id = avb.account_id
-LEFT JOIN ( SELECT to_id, COUNT(to_id) AS prio FROM (SELECT to_id FROM transfer WHERE valuable_id != ? AND to_id != ? ORDER BY transaction_id DESC LIMIT 1000) GROUP BY to_id ) ON ( to_id = avb.account_id )
-WHERE active=1 AND browsable=1 AND valuable_id = ?
-ORDER BY prio DESC, name ASC""",
-        [app.config['MONEY_VALUABLE_ID'], app.config['STORAGE_ACCOUNT'][0], app.config['MONEY_VALUABLE_ID']])
+    db = db.execute('SELECT * FROM `index`')
     users = db.fetchall()
 
     return render_template('start.html', title="Benutzerübersicht", users=users)
@@ -106,14 +99,7 @@ ORDER BY prio DESC, name ASC""",
 @app.route('/admin', methods=['GET'])
 def admin_index():
     db = get_db()
-    db = db.execute(
-        """SELECT user.name AS name, image_path, balance, prio
-FROM user
-INNER JOIN account_valuable_balance AS avb ON user.account_id = avb.account_id
-LEFT JOIN ( SELECT to_id, COUNT(to_id) AS prio FROM (SELECT to_id FROM transfer WHERE valuable_id != ? AND to_id != ? ORDER BY transaction_id DESC LIMIT 1000) GROUP BY to_id ) ON ( to_id = avb.account_id )
-WHERE active=1 AND browsable=1 AND valuable_id = ?
-ORDER BY prio DESC, name ASC""",
-        [app.config['MONEY_VALUABLE_ID'], app.config['STORAGE_ACCOUNT'][0], app.config['MONEY_VALUABLE_ID']])
+    db = db.execute('SELECT * FROM `index`')
     users = db.fetchall()
 
     return render_template('start.html', title="Benutzerübersicht", admin_panel=True, users=users)
@@ -275,7 +261,7 @@ def admin_stats():
     db = get_db()
     if request.method == 'GET':
         cur = db.execute(
-            'SELECT `transaction`.rowid, comment, datetime, account_from.name AS from_name, from_id, account_to.name AS to_name, to_id, amount, valuable.unit_name, valuable.name AS valuable_name, valuable_id FROM `transaction` JOIN transfer ON `transaction`.rowid = transfer.transaction_id JOIN `valuable` ON transfer.valuable_id = valuable.rowid LEFT JOIN account AS account_from ON from_id = account_from.rowid LEFT JOIN account AS account_to ON to_id = account_to.rowid WHERE from_id = ? OR to_id = ?  ORDER BY strftime("%s", datetime) DESC LIMIT 100',
+            'SELECT * FROM stats WHERE from_id = ? OR to_id = ? LIMIT 100',
             [app.config['STORAGE_ACCOUNT'][0], app.config['STORAGE_ACCOUNT'][0]])
         transactions = cur.fetchall()
         return render_template('admin_statistiken.html', title="Statistiken" + app.config['STORAGE_ACCOUNT'][1], transactions=transactions, admin_panel=True )
@@ -307,17 +293,17 @@ def action_buy(username, valuablename):
     db = get_db()
     cur = db.cursor()
     cur.execute(
-        'SELECT rowid, name, account_id, direct_payment FROM user WHERE active=1 and name=?',
+        'SELECT name, account_id, direct_payment FROM user WHERE active=1 and name=?',
         [username])
     user = cur.fetchone()
     if not user:
         abort(404)
         
-    cur.execute('SELECT valuable.rowid, price+tax AS price FROM valuable, user WHERE product=1 and valuable.name=? and user.name=?', [valuablename, username])
+    cur.execute('SELECT valuable.valuable_id, price+tax AS price FROM valuable, user WHERE product=1 and valuable.name=? and user.name=?', [valuablename, username])
     valuable = cur.fetchone()
     cur.execute('INSERT INTO `transaction` (datetime) VALUES (?)', [datetime.now()])
     transaction_id = cur.lastrowid
-    cur.execute('INSERT INTO transfer (from_id, to_id, valuable_id, amount, transaction_id) VALUES  (?, ?, ?, ?, ?)', [app.config['STORAGE_ACCOUNT'][0], user['account_id'], valuable['rowid'], 1, transaction_id])
+    cur.execute('INSERT INTO transfer (from_id, to_id, valuable_id, amount, transaction_id) VALUES  (?, ?, ?, ?, ?)', [app.config['STORAGE_ACCOUNT'][0], user['account_id'], valuable['valuable_id'], 1, transaction_id])
     if not user['direct_payment']:
         cur.execute('INSERT INTO transfer (from_id, to_id, valuable_id, amount, transaction_id) VALUES  (?, ?, ?, ?, ?)', [user['account_id'], None, app.config['MONEY_VALUABLE_ID'], valuable['price'], transaction_id])
     else:
@@ -335,11 +321,11 @@ def transfer_money(username):
     db = get_db()
     cur = db.cursor()
     cur.execute(
-        'SELECT rowid, name, account_id FROM user WHERE active=1 and direct_payment=0 and name=?',
+        'SELECT name, account_id FROM user WHERE active=1 and direct_payment=0 and name=?',
         [username])
     user = cur.fetchone()
     cur.execute(
-        'SELECT rowid, name, account_id FROM user WHERE active=1 and direct_payment=0 and name=?',
+        'SELECT name, account_id FROM user WHERE active=1 and direct_payment=0 and name=?',
         [request.form['to']])
     to_user = cur.fetchone()
     if not user or not to_user:
@@ -420,7 +406,7 @@ def edit_userprofile(username):
             [user['account_id']])
         balance = cur.fetchall()
         cur = db.execute(
-            'SELECT `transaction`.rowid, comment, datetime, account_from.name AS from_name, from_id, account_to.name AS to_name, to_id, amount, valuable.unit_name, valuable.name AS valuable_name, valuable_id FROM `transaction` JOIN transfer ON `transaction`.rowid = transfer.transaction_id JOIN `valuable` ON transfer.valuable_id = valuable.rowid LEFT JOIN account AS account_from ON from_id = account_from.rowid LEFT JOIN account AS account_to ON to_id = account_to.rowid WHERE from_id = ? OR to_id = ?  ORDER BY strftime("%s", datetime) DESC LIMIT 25',
+            'SELECT * FROM stats WHERE from_id = ? OR to_id = ? LIMIT 25',
             [user['account_id'], user['account_id']])
         transactions = cur.fetchall()
         return render_template('user_profile.html', title="Benutzerprofil " + user['name'], user=user, transactions=transactions, balance=balance, return_to_userpage=True)
@@ -431,9 +417,6 @@ def edit_userprofile(username):
         if request.form['mail'] == '' or not EMAIL_REGEX.match(request.form['mail']):
             flash(u'Bitte eine korrekte Kontaktadresse angeben, danke!')
             return redirect(url_for('edit_userprofile', username=user['name']))
-
-        cur.execute('UPDATE account SET name=? WHERE rowid = ?',
-                   [request.form['name'], user['account_id']])
 
         filename = user['image_path']
         if request.files['image'] and request.files['image'].filename != '':
@@ -502,9 +485,6 @@ def add_user():
             flash(u'Bitte eine Kontaktadresse angeben, danke!')
             return redirect(url_for('show_index'))
 
-        cur.execute('INSERT INTO account (name) VALUES (?)',
-                   [request.form['name']])
-
         image = request.files['image']
         if image and allowed_file(image.filename):
             filename = 'users/'+randomword(10)+'_'+secure_filename(image.filename)
@@ -530,8 +510,8 @@ def add_user():
         else:
             filename = None
 
-        cur.execute('INSERT INTO user (name, mail, account_id, image_path) VALUES (?, ?, ?, ?)',
-                   [request.form['name'], request.form['mail'], cur.lastrowid, filename])
+        cur.execute('INSERT INTO user (name, mail, image_path) VALUES (?, ?, ?)',
+                   [request.form['name'], request.form['mail'], filename])
         db.commit()
         return redirect(url_for('edit_userprofile', username=request.form['name']))
 
@@ -633,7 +613,7 @@ def graphs():
     db = get_db()
     df = pd.read_sql_query("""
 SELECT dt as date, count(dt) as amount
-FROM (SELECT substr(datetime,0,11) as dt FROM `transaction` INNER JOIN transfer ON `transaction`.rowid = transfer.transaction_id WHERE valuable_id!=1 AND to_id!=4)
+FROM (SELECT substr(datetime,0,11) as dt FROM `transaction` INNER JOIN transfer ON `transaction`.transaction_id = transfer.transaction_id WHERE valuable_id!=1 AND to_id!=4)
 GROUP BY dt
 ORDER BY dt DESC
 LIMIT 365
@@ -660,7 +640,7 @@ LIMIT 365
 
     df = pd.read_sql_query("""
 SELECT dt as date, count(dt) as amount
-FROM (SELECT substr(datetime,12,8) as dt FROM `transaction` INNER JOIN transfer ON `transaction`.rowid = transfer.transaction_id WHERE valuable_id!=1 AND to_id!=4)
+FROM (SELECT substr(datetime,12,8) as dt FROM `transaction` INNER JOIN transfer ON `transaction`.transaction_id = transfer.transaction_id WHERE valuable_id!=1 AND to_id!=4)
 GROUP BY dt
 ORDER BY dt ASC
     """, db)

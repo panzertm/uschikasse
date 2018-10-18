@@ -1,7 +1,4 @@
 BEGIN TRANSACTION;
-CREATE TABLE IF NOT EXISTS `account` (
-    `name`  TEXT UNIQUE
-);
 CREATE TABLE IF NOT EXISTS `unit` (
     `name`      TEXT PRIMARY KEY,
     `symbol`    TEXT NOT NULL UNIQUE
@@ -11,23 +8,30 @@ CREATE TABLE IF NOT EXISTS `transfer` (
     `to_id`          INTEGER,
     `valuable_id`    INTEGER NOT NULL,
     `amount`         INTEGER NOT NULL,
-    `transaction_id` INTEGER NOT NULL
+    `transaction_id` INTEGER NOT NULL,
+    FOREIGN KEY(`transaction_id`) REFERENCES `transaction`(`transaction_id`),
+    FOREIGN KEY(`from_id`) REFERENCES `user`(`account_id`),
+    FOREIGN KEY(`to_id`) REFERENCES `user`(`account_id`),
+    FOREIGN KEY(`valuable_id`) REFERENCES `valuable`(`valuable_id`)
 );
 CREATE TABLE IF NOT EXISTS `transaction` (
+    `transaction_id` INTEGER PRIMARY KEY AUTOINCREMENT,
     `comment`   TEXT,
     `datetime`  TEXT
 );
 CREATE TABLE IF NOT EXISTS `valuable` (
+    `valuable_id`   INTEGER PRIMARY KEY AUTOINCREMENT,
     `name`          TEXT NOT NULL UNIQUE,
     `active`        INTEGER NOT NULL DEFAULT 1,
     `unit_name`     INTEGER NOT NULL,
     `price`         INTEGER NOT NULL,
     `image_path`    TEXT,
-    `product`       INTEGER NOT NULL DEFAULT 1
+    `product`       INTEGER NOT NULL DEFAULT 1,
+    FOREIGN KEY(`unit_name`) REFERENCES `unit`(`name`)
 );
 CREATE TABLE IF NOT EXISTS `user` (
     `name`               TEXT NOT NULL UNIQUE,
-    `account_id`         INTEGER NOT NULL UNIQUE,
+    `account_id`         INTEGER PRIMARY KEY AUTOINCREMENT,
     `mail`               TEXT,
     `image_path`         TEXT,
     `browsable`          INTEGER NOT NULL DEFAULT 1,
@@ -39,25 +43,55 @@ CREATE TABLE IF NOT EXISTS `user` (
 
 CREATE VIEW IF NOT EXISTS `account_valuable_balance` AS
     SELECT
-        account.name AS account_name,
-        account.rowid AS account_id,
+        user.name AS account_name,
+        account_id,
         valuable.name AS valuable_name,
-        valuable.rowid AS valuable_id,
-        ifnull((SELECT sum(ifnull(amount,0)) FROM transfer WHERE to_id = account.rowid AND valuable_id = valuable.rowid),0)-ifnull((SELECT sum(ifnull(amount,0)) FROM transfer WHERE from_id = account.rowid AND valuable_id = valuable.rowid),0) AS balance,
+        valuable_id,
+        ifnull((SELECT sum(ifnull(amount,0)) FROM transfer WHERE to_id = account_id AND valuable_id = valuable.valuable_id),0)-ifnull((SELECT sum(ifnull(amount,0)) FROM transfer WHERE from_id = account_id AND valuable_id = valuable.valuable_id),0) AS balance,
         valuable.unit_name AS unit_name
-    FROM account, valuable;
+    FROM user, valuable
+    ORDER BY account_id;
 
-INSERT INTO `account` (`rowid`, `name`) VALUES (1, 'FSI: Graue Kasse');
-INSERT INTO `account` (`rowid`, `name`) VALUES (2, 'FSI: Blaue Kasse');
-INSERT INTO `account` (`rowid`, `name`) VALUES (3, 'FSI: Bankkonto');
-INSERT INTO `account` (`rowid`, `name`) VALUES (4, 'FSI: Lager+Kühlschrank');
-INSERT INTO `account` (`rowid`, `name`) VALUES (5, 'Gäste');
-INSERT INTO `account` (`rowid`, `name`) VALUES (6, 'Materialsammlung');
+CREATE VIEW IF NOT EXISTS `stats` AS
+    SELECT 
+        `transaction`.transaction_id,
+        comment,
+        datetime,
+        account_from.name AS from_name,
+        from_id,
+        account_to.name AS to_name,
+        to_id,
+        amount,
+        valuable.unit_name,
+        valuable.name AS valuable_name,
+        valuable.valuable_id
+    FROM `transaction`
+    JOIN transfer ON `transaction`.transaction_id = transfer.transaction_id
+    JOIN `valuable` ON transfer.valuable_id = valuable.valuable_id
+    LEFT JOIN user AS account_from ON from_id = account_from.account_id
+    LEFT JOIN user AS account_to ON to_id = account_to.account_id
+    ORDER BY strftime("%s", datetime) DESC;
 
-INSERT INTO `user` (`name`, `account_id`, `browsable`, `direct_payment`, `allow_edit_profile`, `tax`)
-    VALUES ("Gäste", 5, 0, 1, 0, 10);
-INSERT INTO `user` (`name`, `account_id`, `browsable`, `direct_payment`, `allow_edit_profile`, `tax`)
-    VALUES ("Materialsammlung", 6, 0, 1, 0, 10);
+CREATE VIEW IF NOT EXISTS `index` AS
+    SELECT user.name AS name, image_path, balance, prio
+    FROM user
+    INNER JOIN account_valuable_balance AS avb ON user.account_id = avb.account_id
+    LEFT JOIN ( SELECT to_id, COUNT(to_id) AS prio FROM (SELECT to_id FROM transfer WHERE valuable_id != 1 AND to_id != 4 ORDER BY transaction_id DESC LIMIT 1000) GROUP BY to_id ) ON ( to_id = avb.account_id )
+    WHERE active=1 AND browsable=1 AND valuable_id = 1
+    ORDER BY prio DESC, name ASC;
+
+INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`)
+    VALUES ('FSI: Graue Kasse', 0, 0, 0);
+INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`)
+    VALUES ('FSI: Blaue Kasse', 0, 0, 0);
+INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`)
+    VALUES ('FSI: Bankkonto', 0, 0, 0);
+INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`)
+    VALUES ('FSI: Lager+Kühlschrank', 0, 0, 0);
+INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`, `tax`)
+    VALUES ("Gäste", 0, 1, 0, 10);
+INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`, `tax`)
+    VALUES ("Materialsammlung", 0, 1, 0, 10);
 
 INSERT INTO `unit` (`name`, `symbol`) VALUES ('Cent', '¢');
 INSERT INTO `unit` (`name`, `symbol`) VALUES ('Flasche', 'Fl.');
