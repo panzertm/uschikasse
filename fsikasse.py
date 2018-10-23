@@ -12,12 +12,15 @@ except:
 
 from sqlite3 import dbapi2 as sqlite3
 import os
+import io
 import re
 import random
 import string
 from datetime import datetime
 import time
 import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import calendar
 
@@ -608,8 +611,8 @@ def cancle_transaction(username, transaction_id):
     flash('Buchung wurde storniert.')
     return redirect(url_for('edit_userprofile', username=username))
 
-@app.route('/graphs')
-def graphs():
+def graphs_helper():
+    t1 = time.time()
     db = get_db()
     df = pd.read_sql_query("""
 SELECT dt as date, count(dt) as amount
@@ -623,19 +626,25 @@ LIMIT 365
     df = df.resample('D', on='date').sum().reset_index()
     df.plot(x='date', y='amount', figsize=[12.8, 4.8], label='', legend=False, title='Purchases per day (last 365 days)')
     plt.gca().xaxis.label.set_visible(False)
-    plt.savefig('static/plots/year.svg', bbox_inches='tight')
+    imgdata = io.StringIO()
+    plt.savefig(imgdata, format='svg', bbox_inches='tight')
+    yield imgdata.getvalue()
+    imgdata.close()
     plt.close()
 
     df = df.groupby(df['date'].apply(lambda x: x.dayofweek)).sum().reset_index()
     df['date'] = df['date'].apply(lambda x: calendar.day_abbr[x])
     df['amount'] = df['amount'].apply(lambda x: x/df['amount'].sum())
-    df.set_index('date').plot.bar(rot=0, label='', legend=False, title='Purchases per week day')
+    df.set_index('date').plot.bar(rot=0, label='', legend=False, title='Purchases per week day (last 365 days)')
     plt.gca().xaxis.label.set_visible(False)
     # manipulate
     ax = plt.gca()
     vals = ax.get_yticks()
     ax.set_yticklabels(['{:,.2%}'.format(x) for x in vals])
-    plt.savefig('static/plots/week.svg', bbox_inches='tight')
+    imgdata = io.StringIO()
+    plt.savefig(imgdata, format='svg', bbox_inches='tight')
+    yield imgdata.getvalue()
+    imgdata.close()
     plt.close()
 
     df = pd.read_sql_query("""
@@ -652,9 +661,26 @@ ORDER BY dt ASC
     ax = plt.gca()
     vals = ax.get_yticks()
     ax.set_yticklabels(['{:,.2%}'.format(x) for x in vals])
-    plt.savefig('static/plots/hour.svg', bbox_inches='tight')
+    # ax.xaxis.set_major_formatter(DateFormatter("%H:%M"))
+    imgdata = io.StringIO()
+    plt.savefig(imgdata, format='svg', bbox_inches='tight')
+    yield imgdata.getvalue()
+    imgdata.close()
     plt.close()
-    return render_template('graphs.html', title='Some graphs', rand=int(time.time()), return_to_index=True)
+
+    yield '<p>Plotting took %.2f seconds.</p>' % (time.time()-t1)
+
+from flask import stream_with_context, request, Response
+
+@app.route('/graphs')
+def graphs():
+    def stream_template(template_name, **context):
+        app.update_template_context(context) 
+        t = app.jinja_env.get_template(template_name)
+        rv = t.stream(context) 
+        return rv
+    svgs=graphs_helper()
+    return Response(stream_with_context(stream_template('stream.html', svgs=svgs, title='Some graphs', return_to_index=True)))
 
 if __name__ == '__main__':
     app.debug = True
