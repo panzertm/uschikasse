@@ -8,8 +8,7 @@ A neat little web application that manages the sale and stock of drinks and swee
 
 Install dependencies:
 
-    $ pip install -U Flask
-    $ pip install -U Pillow
+    $ pip install -U Flask Pillow Pandas Matplotlib
 
 [Download](https://github.com/FSI-CE/fsikasse/archive/master.zip) and extract fsikasse or clone the git repository.
 

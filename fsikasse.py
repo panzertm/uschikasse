@@ -172,7 +172,7 @@ def edit_item_properties(item_name):
     product   = False if not 'product' in request.form else request.form.get('product') == 'on'
 
     filename = item['image_path']
-    if request.files['image'] and request.files['image'].filename != '':
+    if 'image' in request.files and request.files['image'].filename != '':
         # Replace image
         image = request.files['image']
         assert image and allowed_file(image.filename), \
@@ -225,7 +225,7 @@ def add_item():
     product   = False if not 'product' in request.form else request.form.get('product') == 'on'
 
     filename = 'products/placeholder.png'
-    if request.files['image'] and request.files['image'].filename != '':
+    if 'image' in request.files and request.files['image'].filename != '':
         # Replace image
         image = request.files['image']
         assert image and allowed_file(image.filename), \
@@ -422,7 +422,7 @@ def edit_userprofile(username):
             return redirect(url_for('edit_userprofile', username=user['name']))
 
         filename = user['image_path']
-        if request.files['image'] and request.files['image'].filename != '':
+        if 'image' in request.files and request.files['image'].filename != '':
             # Replace image
             image = request.files['image']
             assert image and allowed_file(image.filename), \
@@ -451,7 +451,7 @@ def edit_userprofile(username):
                    [request.form['name'], request.form['mail'], filename, username])
         db.commit()
 
-        if request.files['image'] and user['image_path']:
+        if 'image' in request.files and user['image_path']:
             # Remove old profile image
             os.unlink(os.path.join(app.config['UPLOAD_FOLDER'], user['image_path']))
 
@@ -488,7 +488,7 @@ def add_user():
             flash(u'Bitte eine Kontaktadresse angeben, danke!')
             return redirect(url_for('show_index'))
 
-        image = request.files['image']
+        image = request.files['image'] if 'image' in request.files else None
         if image and allowed_file(image.filename):
             filename = 'users/'+randomword(10)+'_'+secure_filename(image.filename)
 
