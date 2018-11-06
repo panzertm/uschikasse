@@ -94,9 +94,15 @@ def allowed_file(filename):
 @app.route('/')
 def show_index():
     db = get_db()
-    cur = db.execute('SELECT * FROM `index`')
+    cur = db.execute("""
+SELECT name, 
+    CASE
+    WHEN balance<-1000 then 'users/shame.gif'
+    ELSE image_path
+    END AS image_path,
+balance, prio FROM `index`""")
     users = cur.fetchall()
-    cur = db.execute('SELECT substr(datetime,0,11) as date, to_name as name FROM stats WHERE to_id!=4 LIMIT 1000,1')
+    cur = db.execute('SELECT substr(datetime,0,11) as date, to_name as name FROM stats WHERE valuable_id != 1 AND to_id != 4 LIMIT 1000,1')
     purchase = cur.fetchone()
 
     return render_template('start.html', title="Benutzerübersicht", users=users, purchase=purchase)
@@ -104,9 +110,15 @@ def show_index():
 @app.route('/admin', methods=['GET'])
 def admin_index():
     db = get_db()
-    cur = db.execute('SELECT * FROM `index`')
+    cur = db.execute("""
+SELECT name, 
+    CASE
+    WHEN balance<-1000 then 'users/shame.gif'
+    ELSE image_path
+    END AS image_path,
+balance, prio FROM `index`""")
     users = cur.fetchall()
-    cur = db.execute('SELECT substr(datetime,0,11) as date, to_name as name FROM stats WHERE to_id!=4 LIMIT 1000,1')
+    cur = db.execute('SELECT substr(datetime,0,11) as date, to_name as name FROM stats WHERE valuable_id != 1 AND to_id != 4 LIMIT 1000,1')
     purchase = cur.fetchone()
 
     return render_template('start.html', title="Benutzerübersicht", admin_panel=True, users=users, purchase=purchase)
