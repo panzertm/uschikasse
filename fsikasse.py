@@ -94,18 +94,22 @@ def allowed_file(filename):
 @app.route('/')
 def show_index():
     db = get_db()
-    db = db.execute('SELECT * FROM `index`')
-    users = db.fetchall()
+    cur = db.execute('SELECT * FROM `index`')
+    users = cur.fetchall()
+    cur = db.execute('SELECT substr(datetime,0,11) as date, to_name as name FROM stats WHERE to_id!=4 LIMIT 1000,1')
+    purchase = cur.fetchone()
 
-    return render_template('start.html', title="Benutzerübersicht", users=users)
+    return render_template('start.html', title="Benutzerübersicht", users=users, purchase=purchase)
 
 @app.route('/admin', methods=['GET'])
 def admin_index():
     db = get_db()
-    db = db.execute('SELECT * FROM `index`')
-    users = db.fetchall()
+    cur = db.execute('SELECT * FROM `index`')
+    users = cur.fetchall()
+    cur = db.execute('SELECT substr(datetime,0,11) as date, to_name as name FROM stats WHERE to_id!=4 LIMIT 1000,1')
+    purchase = cur.fetchone()
 
-    return render_template('start.html', title="Benutzerübersicht", admin_panel=True, users=users)
+    return render_template('start.html', title="Benutzerübersicht", admin_panel=True, users=users, purchase=purchase)
 
 @app.route('/admin/lager', methods=['GET'])
 def admin_lagerbestand():
