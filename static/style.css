@@ -484,6 +484,8 @@ div.prod .price
 	text-align: right;
 }
 
+.balance th,
+.history th,
 .balance td,
 .history td
 {

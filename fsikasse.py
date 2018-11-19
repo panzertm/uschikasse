@@ -16,7 +16,7 @@ import io
 import re
 import random
 import string
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
 import pandas as pd
 import matplotlib
@@ -696,7 +696,10 @@ def graphs():
         rv = t.stream(context) 
         return rv
     svgs=graphs_helper()
-    return Response(stream_with_context(stream_template('stream.html', svgs=svgs, title='Some graphs', return_to_index=True)))
+    db = get_db()
+    cur = db.execute('select count(*) as amount, valuable_name as name from stats where datetime>? and valuable_id!=? group by valuable_id order by valuable_id', [datetime.today() - timedelta(days=14),app.config['MONEY_VALUABLE_ID']])
+    purchases= cur.fetchall()
+    return Response(stream_with_context(stream_template('stream.html', svgs=svgs, purchases=purchases, title='Some graphs', return_to_index=True)))
 
 if __name__ == '__main__':
     app.debug = True

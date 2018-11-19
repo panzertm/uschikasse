@@ -1,8 +1,31 @@
 {% extends "layout.html" %}
 {% block body %}
+<div class="main_wrapper" style="height:666px;" unselectable='on' onselectstart='return false;' onmousedown='return false;'>
 
-<img src="/static/plots/year.svg?{{rand}}" alt="error" /> <br />
-<img src="/static/plots/week.svg?{{rand}}" alt="error" />
-<img src="/static/plots/hour.svg?{{rand}}" alt="error" />
+<table style="width:100%">
+  <tr>
+    <td>
+      <table class="balance" style="width:10cm">
+        <caption><h2>Gekaufte Produkte (14 Tage)</h2></caption>
+        <tr>
+          <th>Produkt</th>
+          <th>Menge</th>
+        </tr>
+        {% for p in purchases %}
+        <tr>
+          <td>{{p.name}}</td>
+          <td>{{p.amount}}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </td>
+    <td>
+      {% for svg in svgs %}
+      {{ svg|safe }}
+      {% endfor %}
+    </td>
+  </tr>
+</table>
 
+</div>
 {% endblock %}
