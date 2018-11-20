@@ -102,7 +102,7 @@ SELECT name,
     END AS image_path,
 balance, prio FROM `index`""")
     users = cur.fetchall()
-    cur = db.execute('SELECT substr(datetime,0,11) as date, to_name as name FROM stats WHERE valuable_id != 1 AND to_id != 4 LIMIT 1000,1')
+    cur = db.execute('SELECT substr(datetime,0,11) as date, to_name as name FROM stats WHERE valuable_id != 1 AND to_id != 4 LIMIT 999,1')
     purchase = cur.fetchone()
 
     return render_template('start.html', title="Benutzerübersicht", users=users, purchase=purchase)
@@ -118,7 +118,7 @@ SELECT name,
     END AS image_path,
 balance, prio FROM `index`""")
     users = cur.fetchall()
-    cur = db.execute('SELECT substr(datetime,0,11) as date, to_name as name FROM stats WHERE valuable_id != 1 AND to_id != 4 LIMIT 1000,1')
+    cur = db.execute('SELECT substr(datetime,0,11) as date, to_name as name FROM stats WHERE valuable_id != 1 AND to_id != 4 LIMIT 999,1')
     purchase = cur.fetchone()
 
     return render_template('start.html', title="Benutzerübersicht", admin_panel=True, users=users, purchase=purchase)
@@ -699,7 +699,7 @@ def graphs():
     db = get_db()
     cur = db.execute('select count(*) as amount, valuable_name as name from stats where datetime>? and valuable_id!=? group by valuable_id order by valuable_id', [datetime.today() - timedelta(days=14),app.config['MONEY_VALUABLE_ID']])
     purchases= cur.fetchall()
-    return Response(stream_with_context(stream_template('stream.html', svgs=svgs, purchases=purchases, title='Some graphs', return_to_index=True)))
+    return Response(stream_with_context(stream_template('graphs.html', svgs=svgs, purchases=purchases, title='Some graphs', return_to_index=True)))
 
 if __name__ == '__main__':
     app.debug = True
