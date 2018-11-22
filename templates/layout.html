@@ -10,9 +10,11 @@
 <h1>
   <table class="header" style="width:100%;table-layout:fixed">
     <tr>
-      <td>{{ title }}:</td>
-      <td style="text-align:center">{% if purchase %}1000. Einkauf: {{ purchase.date }} {{ purchase.name }}{% endif %}</td>
-      <td></td>
+      <td style="width:25%">{{ title }}:</td>
+      <td style="width:50%;text-align:center;white-space:nowrap;text-overflow:ellipsis;">
+        {% if purchase %}1000. Einkauf: {{ purchase.date }} {{ purchase.name }}{% endif %}
+      </td>
+      <td style="width:25%"></td>
     </tr>
   </table>
 </h1>
