@@ -1,4 +1,4 @@
-# FSI-Kasse
+# FG-VIng - Getränkekasse 
 
 ## Description
 
