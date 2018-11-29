@@ -1,4 +1,4 @@
-# FG-VIng - Getränkekasse 
+# FG-VIng - Getränkekasse  [in development do not use in production]
 
 ## Description
 
