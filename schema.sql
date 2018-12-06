@@ -73,12 +73,12 @@ CREATE VIEW IF NOT EXISTS `stats` AS
     ORDER BY strftime("%s", datetime) DESC;
 
 CREATE VIEW IF NOT EXISTS `index` AS
-    SELECT user.name AS name, image_path, balance, prio
+    SELECT user.name AS name, image_path, balance, umsatz
     FROM user
     INNER JOIN account_valuable_balance AS avb ON user.account_id = avb.account_id
-    LEFT JOIN ( SELECT to_id, COUNT(to_id) AS prio FROM (SELECT to_id FROM transfer WHERE valuable_id != 1 AND to_id != 4 ORDER BY transaction_id DESC LIMIT 1000) GROUP BY to_id ) ON ( to_id = avb.account_id )
+    LEFT JOIN (SELECT to_id, SUM(price) AS umsatz FROM (SELECT to_id, price FROM transfer INNER JOIN valuable ON transfer.valuable_id=valuable.valuable_id WHERE transfer.valuable_id != 1 AND to_id != 4 ORDER BY transaction_id DESC LIMIT 1000) GROUP BY to_id) ON ( to_id = avb.account_id )
     WHERE active=1 AND browsable=1 AND valuable_id = 1
-    ORDER BY prio DESC, name ASC;
+    ORDER BY umsatz DESC, name ASC;
 
 INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`)
     VALUES ('FSI: Graue Kasse', 0, 0, 0);
