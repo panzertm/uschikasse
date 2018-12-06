@@ -100,7 +100,7 @@ SELECT name,
     WHEN balance<-1000 then 'users/shame.gif'
     ELSE image_path
     END AS image_path,
-balance, prio FROM `index`""")
+balance, umsatz * 100.0 / (SELECT SUM(umsatz) FROM `index`) AS prio FROM `index`""")
     users = cur.fetchall()
     cur = db.execute('SELECT substr(datetime,0,11) as date, to_name as name FROM stats WHERE valuable_id != 1 AND to_id != 4 LIMIT 999,1')
     purchase = cur.fetchone()
@@ -116,7 +116,7 @@ SELECT name,
     WHEN balance<-1000 then 'users/shame.gif'
     ELSE image_path
     END AS image_path,
-balance, prio FROM `index`""")
+balance, umsatz * 100.0 / (SELECT SUM(umsatz) FROM `index`) AS prio FROM `index`""")
     users = cur.fetchall()
     cur = db.execute('SELECT substr(datetime,0,11) as date, to_name as name FROM stats WHERE valuable_id != 1 AND to_id != 4 LIMIT 999,1')
     purchase = cur.fetchone()
