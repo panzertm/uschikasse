@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS `transfer` (
 );
 CREATE TABLE IF NOT EXISTS `transaction` (
     `transaction_id` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `visible`   BOOLEAN NOT NULL DEFAULT 1,
     `comment`   TEXT,
     `datetime`  TEXT
 );
@@ -70,6 +71,7 @@ CREATE VIEW IF NOT EXISTS `stats` AS
     JOIN `valuable` ON transfer.valuable_id = valuable.valuable_id
     LEFT JOIN user AS account_from ON from_id = account_from.account_id
     LEFT JOIN user AS account_to ON to_id = account_to.account_id
+    WHERE visible = 1
     ORDER BY strftime("%s", datetime) DESC;
 
 CREATE VIEW IF NOT EXISTS `index` AS

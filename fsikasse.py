@@ -609,6 +609,12 @@ def cancle_transaction(username, transaction_id):
     if not user:
         abort(404)
 
+    cur.execute('SELECT * FROM `transaction` WHERE transaction_id = ? AND visible = 1', [transaction_id])
+    transaction = cur.fetchone()
+    
+    if not transaction:
+        abort(403)
+
     cur.execute(
         'SELECT from_id, to_id, valuable_id, amount FROM transfer WHERE transaction_id = ?',
         [transaction_id])
@@ -622,6 +628,7 @@ def cancle_transaction(username, transaction_id):
             'INSERT INTO transfer (from_id, to_id, valuable_id, amount, transaction_id) ' +
                 'VALUES  (?, ?, ?, ?, ?)',
             [t['to_id'], t['from_id'], t['valuable_id'], t['amount'], cancle_transaction_id])
+    cur.execute('UPDATE `transaction` SET visible = 0 WHERE transaction_id = ?', [transaction_id])
     db.commit()
 
     flash('Buchung wurde storniert.')
