@@ -356,7 +356,7 @@ def transfer_money(username):
         flash(u'Keine Transaktion durchgeführt.')
         return redirect(url_for('show_index'))
 
-    cur.execute('INSERT INTO `transaction` (datetime) VALUES (?)', [datetime.now()])
+    cur.execute('INSERT INTO `transaction` (datetime, comment) VALUES (?, ?)', [datetime.now(), 'Überweisung von %.2f€' % (float(amount)/100)])
     transaction_id = cur.lastrowid
     cur.execute('INSERT INTO transfer (from_id, to_id, valuable_id, amount, transaction_id) VALUES  (?, ?, ?, ?, ?)',
         [user['account_id'], to_user['account_id'], app.config['MONEY_VALUABLE_ID'], amount, transaction_id])
@@ -551,7 +551,7 @@ def add_to_account(username):
         flash(u'Keine Transaktion durchgeführt.')
         return redirect(url_for('show_index'))
 
-    cur.execute('INSERT INTO `transaction` (datetime) VALUES (?)', [datetime.now()])
+    cur.execute('INSERT INTO `transaction` (datetime, comment) VALUES (?, ?)', [datetime.now(), 'Einzahlung von %.2f€' % (float(amount)/100)])
     transaction_id = cur.lastrowid
     cur.execute(
         'INSERT INTO transfer (from_id, to_id, valuable_id, amount, transaction_id) ' +
@@ -583,7 +583,7 @@ def sub_from_account(username):
         flash(u'Keine Transaktion durchgeführt.')
         return redirect(url_for('show_index'))
 
-    cur.execute('INSERT INTO `transaction` (datetime) VALUES (?)', [datetime.now()])
+    cur.execute('INSERT INTO `transaction` (datetime, comment) VALUES (?, ?)', [datetime.now(), 'Auszahlung von %.2f€' % (float(amount)/100)])
     transaction_id = cur.lastrowid
     cur.execute(
         'INSERT INTO transfer (from_id, to_id, valuable_id, amount, transaction_id) ' +
@@ -609,6 +609,7 @@ def cancle_transaction(username, transaction_id):
     if not user:
         abort(404)
 
+    # hide canceled transaction
     cur.execute('SELECT * FROM `transaction` WHERE transaction_id = ? AND visible = 1', [transaction_id])
     transaction = cur.fetchone()
     
