@@ -100,7 +100,7 @@ SELECT name,
     WHEN balance<-1000 then 'users/shame.gif'
     ELSE image_path
     END AS image_path,
-balance, prio FROM `index`""")
+balance, umsatz * 100.0 / (SELECT SUM(umsatz) FROM `index`) AS prio FROM `index`""")
     users = cur.fetchall()
     cur = db.execute('SELECT substr(datetime,0,11) as date, to_name as name FROM stats WHERE valuable_id != 1 AND to_id != 4 LIMIT 999,1')
     purchase = cur.fetchone()
@@ -116,7 +116,7 @@ SELECT name,
     WHEN balance<-1000 then 'users/shame.gif'
     ELSE image_path
     END AS image_path,
-balance, prio FROM `index`""")
+balance, umsatz * 100.0 / (SELECT SUM(umsatz) FROM `index`) AS prio FROM `index`""")
     users = cur.fetchall()
     cur = db.execute('SELECT substr(datetime,0,11) as date, to_name as name FROM stats WHERE valuable_id != 1 AND to_id != 4 LIMIT 999,1')
     purchase = cur.fetchone()
@@ -356,7 +356,7 @@ def transfer_money(username):
         flash(u'Keine Transaktion durchgeführt.')
         return redirect(url_for('show_index'))
 
-    cur.execute('INSERT INTO `transaction` (datetime) VALUES (?)', [datetime.now()])
+    cur.execute('INSERT INTO `transaction` (datetime, comment) VALUES (?, ?)', [datetime.now(), 'Überweisung von %.2f€' % (float(amount)/100)])
     transaction_id = cur.lastrowid
     cur.execute('INSERT INTO transfer (from_id, to_id, valuable_id, amount, transaction_id) VALUES  (?, ?, ?, ?, ?)',
         [user['account_id'], to_user['account_id'], app.config['MONEY_VALUABLE_ID'], amount, transaction_id])
@@ -551,7 +551,7 @@ def add_to_account(username):
         flash(u'Keine Transaktion durchgeführt.')
         return redirect(url_for('show_index'))
 
-    cur.execute('INSERT INTO `transaction` (datetime) VALUES (?)', [datetime.now()])
+    cur.execute('INSERT INTO `transaction` (datetime, comment) VALUES (?, ?)', [datetime.now(), 'Einzahlung von %.2f€' % (float(amount)/100)])
     transaction_id = cur.lastrowid
     cur.execute(
         'INSERT INTO transfer (from_id, to_id, valuable_id, amount, transaction_id) ' +
@@ -583,7 +583,7 @@ def sub_from_account(username):
         flash(u'Keine Transaktion durchgeführt.')
         return redirect(url_for('show_index'))
 
-    cur.execute('INSERT INTO `transaction` (datetime) VALUES (?)', [datetime.now()])
+    cur.execute('INSERT INTO `transaction` (datetime, comment) VALUES (?, ?)', [datetime.now(), 'Auszahlung von %.2f€' % (float(amount)/100)])
     transaction_id = cur.lastrowid
     cur.execute(
         'INSERT INTO transfer (from_id, to_id, valuable_id, amount, transaction_id) ' +
@@ -609,6 +609,13 @@ def cancle_transaction(username, transaction_id):
     if not user:
         abort(404)
 
+    # hide canceled transaction
+    cur.execute('SELECT * FROM `transaction` WHERE transaction_id = ? AND visible = 1', [transaction_id])
+    transaction = cur.fetchone()
+    
+    if not transaction:
+        abort(403)
+
     cur.execute(
         'SELECT from_id, to_id, valuable_id, amount FROM transfer WHERE transaction_id = ?',
         [transaction_id])
@@ -622,6 +629,7 @@ def cancle_transaction(username, transaction_id):
             'INSERT INTO transfer (from_id, to_id, valuable_id, amount, transaction_id) ' +
                 'VALUES  (?, ?, ?, ?, ?)',
             [t['to_id'], t['from_id'], t['valuable_id'], t['amount'], cancle_transaction_id])
+    cur.execute('UPDATE `transaction` SET visible = 0 WHERE transaction_id = ?', [transaction_id])
     db.commit()
 
     flash('Buchung wurde storniert.')

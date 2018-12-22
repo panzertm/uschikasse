@@ -56,7 +56,7 @@
       <div class="user">
         <span class="user-prio">
           {% if user.prio %}
-            {{ '%2.01f%%' % (user.prio / 10.0) }}
+            {{ '%2.01f%%' % user.prio }}
           {% endif %}
         </span>
         <span class="user-image">

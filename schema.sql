@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS `transfer` (
 );
 CREATE TABLE IF NOT EXISTS `transaction` (
     `transaction_id` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `visible`   BOOLEAN NOT NULL DEFAULT 1,
     `comment`   TEXT,
     `datetime`  TEXT
 );
@@ -52,6 +53,7 @@ CREATE VIEW IF NOT EXISTS `account_valuable_balance` AS
     FROM user, valuable
     ORDER BY account_id;
 
+-- detailed transfer history, canceled transactions are hidden
 CREATE VIEW IF NOT EXISTS `stats` AS
     SELECT 
         `transaction`.transaction_id,
@@ -70,15 +72,30 @@ CREATE VIEW IF NOT EXISTS `stats` AS
     JOIN `valuable` ON transfer.valuable_id = valuable.valuable_id
     LEFT JOIN user AS account_from ON from_id = account_from.account_id
     LEFT JOIN user AS account_to ON to_id = account_to.account_id
+    WHERE visible = 1
     ORDER BY strftime("%s", datetime) DESC;
 
+-- view for front page
 CREATE VIEW IF NOT EXISTS `index` AS
-    SELECT user.name AS name, image_path, balance, prio
+    SELECT user.name AS name, image_path, balance, umsatz
     FROM user
     INNER JOIN account_valuable_balance AS avb ON user.account_id = avb.account_id
-    LEFT JOIN ( SELECT to_id, COUNT(to_id) AS prio FROM (SELECT to_id FROM transfer WHERE valuable_id != 1 AND to_id != 4 ORDER BY transaction_id DESC LIMIT 1000) GROUP BY to_id ) ON ( to_id = avb.account_id )
+    LEFT JOIN (
+        -- calculate turnover
+        SELECT to_id, SUM(price) AS umsatz 
+        FROM (
+            -- select last 1000 transactions which aren't canceled
+            SELECT to_id, price 
+            FROM `transfer` 
+            INNER JOIN valuable ON transfer.valuable_id=valuable.valuable_id
+            INNER JOIN `transaction` ON `transaction`.transaction_id = transfer.transaction_id
+            WHERE transfer.valuable_id != 1 AND to_id != 4 AND visible = 1
+            ORDER BY transfer.transaction_id DESC 
+            LIMIT 1000
+        ) GROUP BY to_id
+        ) ON ( to_id = avb.account_id )
     WHERE active=1 AND browsable=1 AND valuable_id = 1
-    ORDER BY prio DESC, name ASC;
+    ORDER BY umsatz DESC, name ASC;
 
 INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`)
     VALUES ('FSI: Graue Kasse', 0, 0, 0);
