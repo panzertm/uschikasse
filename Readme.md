@@ -1,4 +1,4 @@
-# FG-VIng - Getränkekasse  [in development do not use in production]
+# FG-VIng - Getränkekasse  [in development Do not use in production - Fork is manly to change name and usecase]
 
 ## Description
 
@@ -10,10 +10,10 @@ Install dependencies:
 
     $ pip install -U Flask Pillow Pandas Matplotlib
 
-[Download](https://github.com/FSI-CE/fsikasse/archive/master.zip) and extract fsikasse or clone the git repository.
+[Download](https://github.com/legeiger/ving-kasse/archive/master.zip) and extract fsikasse or clone the git repository.
 
-    $ git clone https://github.com/FSI-CE/fsikasse.git
-    $ cd fsikasse
+    $ git clone https://github.com/legeiger/ving-kasse.git
+    $ cd ving-kasse
 
 Setup fsikasse:
 
