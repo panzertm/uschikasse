@@ -10,7 +10,7 @@ Install dependencies:
 
     $ pip install -U Flask Pillow Pandas Matplotlib
 
-[Download](https://github.com/legeiger/ving-kasse/archive/master.zip) and extract fsikasse or clone the git repository.
+[Download](https://github.com/legeiger/ving-kasse/archive/master.zip) and extract ving-kasse or clone the git repository.
 
     $ git clone https://github.com/legeiger/ving-kasse.git
     $ cd ving-kasse
