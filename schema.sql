@@ -98,6 +98,7 @@ CREATE VIEW IF NOT EXISTS `index` AS
     WHERE active=1 AND browsable=1 AND valuable_id = 1
     ORDER BY umsatz DESC, name ASC;
 
+	
 INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`)
     VALUES ('Graue Kasse', 0, 0, 0);
 INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`)
@@ -105,7 +106,7 @@ INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`)
 INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`)
     VALUES ('Lager & Kühlschrank', 0, 0, 0);
 INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`, `tax`)
-    VALUES ('Gaeste', 0, 1, 0, 0);
+    VALUES ('Gäste', 0, 1, 0, 0);
 
 INSERT INTO `unit` (`name`, `symbol`) VALUES ('Cent', '¢');
 INSERT INTO `unit` (`name`, `symbol`) VALUES ('Flasche', 'Fl.');
@@ -114,7 +115,7 @@ INSERT INTO `unit` (`name`, `symbol`) VALUES ('Stück', 'Stk.');
 INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`, `product`)
     VALUES ('Euro', 1, 'Cent', 1, NULL, 0);
 INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
-    VALUES ('Bier (0,5l)', 1, 'Flasche', 100, 'products/bier_05.jpg');
+    VALUES ('Bier (0,5)', 1, 'Flasche', 100, 'products/bier_05.jpg');
 INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
     VALUES ('Bier (0,3)', 1, 'Flasche', 70, 'products/bier_03.jpg');
 INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
@@ -126,5 +127,5 @@ INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
 INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
     VALUES ('Mate', 1, 'Flasche', 70, 'products/Loscher-Club-Mate.png');
 INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
-    VALUES ('Kaffee', 1, 'Flasche', 50, 'products/kaffee.png');
+    VALUES ('Kaffee', 1, 'Flasche', 50, 'products/kaffee.jpg');
 COMMIT;

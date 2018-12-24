@@ -58,8 +58,8 @@ def connect_db():
 def init_db():
     """Initializes the database."""
     db = get_db()
-    with app.open_resource('schema.sql', mode='r') as f:
-        db.cursor().executescript(f.read())
+    with app.open_resource('schema.sql', mode='rb') as f:
+        db.cursor().executescript(f.read().decode("UTF-8"))
     db.commit()
 
 
