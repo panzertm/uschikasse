@@ -98,17 +98,13 @@ CREATE VIEW IF NOT EXISTS `index` AS
     ORDER BY umsatz DESC, name ASC;
 
 INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`)
-    VALUES ('FSI: Graue Kasse', 0, 0, 0);
+    VALUES ('Graue Kasse', 0, 0, 0);
 INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`)
-    VALUES ('FSI: Blaue Kasse', 0, 0, 0);
+    VALUES ('Bankkonto', 0, 0, 0);
 INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`)
-    VALUES ('FSI: Bankkonto', 0, 0, 0);
-INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`)
-    VALUES ('FSI: Lager+Kühlschrank', 0, 0, 0);
+    VALUES ('Lager+Kühlschrank', 0, 0, 0);
 INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`, `tax`)
-    VALUES ("Gäste", 0, 1, 0, 10);
-INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`, `tax`)
-    VALUES ("Materialsammlung", 0, 1, 0, 10);
+    VALUES ('Gäste', 0, 1, 0, 0);
 
 INSERT INTO `unit` (`name`, `symbol`) VALUES ('Cent', '¢');
 INSERT INTO `unit` (`name`, `symbol`) VALUES ('Flasche', 'Fl.');
@@ -117,24 +113,18 @@ INSERT INTO `unit` (`name`, `symbol`) VALUES ('Stück', 'Stk.');
 INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`, `product`)
     VALUES ('Euro', 1, 'Cent', 1, NULL, 0);
 INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
-    VALUES ('Club-Mate', 1, 'Flasche', 60, 'products/Loscher-Club-Mate.png');
+    VALUES ('Bier (0,5l)', 1, 'Flasche', 100, 'products/bier_05.jpg');
 INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
-    VALUES ('ICE-T', 1, 'Flasche', 60, 'products/Loscher-ICE-T.png');
+    VALUES ('Bier (0,3)', 1, 'Flasche', 70, 'products/bier_03.jpg');
 INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
-    VALUES ('Wintermate', 1, 'Flasche', 60, 'products/Loscher-Winter-Mate.png');
+    VALUES ('Radler', 1, 'Flasche', 70, 'products/radler.jpg');
 INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
-    VALUES ('Lapacho', 1, 'Flasche', 60, 'products/Loscher-Lapacho.png');
+    VALUES ('Spezi', 1, 'Flasche', 70, 'products/spezi.jpg');
 INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
-    VALUES ('Mate-Cola', 1, 'Flasche', 60, 'products/Loscher-Mate-Cola.png');
+    VALUES ('Cola', 1, 'Flasche', 100, 'products/cola.png');
 INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
-    VALUES ('Apfelschorle', 1, 'Flasche', 60, 'products/Loscher-Apfelschorle.png');
+    VALUES ('Mate', 1, 'Flasche', 70, 'products/Loscher-Club-Mate.png');
 INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
-    VALUES ('Apfelsaft', 1, 'Flasche', 60, 'products/Loscher-Apfelsaft.png');
-INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
-    VALUES ('Bier', 1, 'Flasche', 90, 'products/Bier.png');
-INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
-    VALUES ('Orangensaft', 1, 'Flasche', 60, 'products/Loscher-Orangensaft.png');
-INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
-    VALUES ('Wasser', 1, 'Flasche', 30, 'products/Loscher-Tafelwasser.png');
+    VALUES ('Kaffee', 1, 'Flasche', 50, 'products/kaffee.png');
 COMMIT;
 

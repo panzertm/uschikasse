@@ -1,7 +1,8 @@
 # Database
 kasse.db
-static/products/*
-static/users/*
+# static/products/*
+# static/users/*
+Personen_FG.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
