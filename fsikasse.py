@@ -39,8 +39,8 @@ app.config.update(dict(
     ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif']),
     PROFILE_IMAGE_SIZE = (150, 200),
     ITEM_IMAGE_SIZE = (150, 300),
-    STORAGE_ACCOUNT = (4, 'Lager+Kühlschrank'),
-    CASH_IN_ACCOUNT = (1, 'FSI: Graue Kasse'),
+    STORAGE_ACCOUNT = (4, 'Lager & Kühlschrank'),
+    CASH_IN_ACCOUNT = (1, 'Graue Kasse'),
     MONEY_VALUABLE_ID = 1,
     SECRET_KEY='development key',
 ))
@@ -290,7 +290,7 @@ def show_userpage(username):
     db = get_db()
     cur = db.cursor()
     cur.execute(
-        'SELECT name, image_path, account_id, direct_payment FROM user WHERE active=1 and name=?',
+        'SELECT name, image_path, account_id, direct_payment, start_semester FROM user WHERE active=1 and name=?',
         [username])
     user = cur.fetchone()
     if not user:
@@ -413,7 +413,7 @@ def edit_userprofile(username):
     db = get_db()
     cur = db.cursor()
     cur.execute(
-        'SELECT name, image_path, account_id, mail, allow_edit_profile FROM user WHERE active=1 AND name=?',
+        'SELECT name, image_path, account_id, mail, allow_edit_profile, start_semester FROM user WHERE active=1 AND name=?',
         [username])
     user = cur.fetchone()
     if not user:
@@ -463,8 +463,8 @@ def edit_userprofile(username):
             im.thumbnail(app.config['PROFILE_IMAGE_SIZE'], Image.ANTIALIAS)
             im.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-        cur.execute('UPDATE user SET name=?, mail=?, image_path=? WHERE name=?',
-                   [request.form['name'], request.form['mail'], filename, username])
+        cur.execute('UPDATE user SET name=?, mail=?, image_path=?, start_semester=? WHERE name=?',
+                   [request.form['name'], request.form['mail'], filename, request.form['start_semester'], username])
         db.commit()
 
         if 'image' in request.files and user['image_path']:
@@ -489,7 +489,7 @@ def activate_user():
         return redirect(url_for('admin_index'))
 
 @app.route('/user/add', methods=['POST', 'GET'])
-def add_user():
+def add_user(): # check for user name already taken bevor pusing into db
     if request.method == 'GET':
         return render_template('add_user.html', title="Benutzer hinzufügen", admin_panel=True)
     else:  # request.method == 'POST'
@@ -499,10 +499,11 @@ def add_user():
         if request.form['name'] == '':
             flash(u'Bitte einen Namen angeben, danke!')
             return redirect(url_for('show_index'))
+		
 
-        if request.form['mail'] == '' or not EMAIL_REGEX.match(request.form['mail']):
-            flash(u'Bitte eine Kontaktadresse angeben, danke!')
-            return redirect(url_for('show_index'))
+        # if request.form['mail'] == '' or not EMAIL_REGEX.match(request.form['mail']):
+            # flash(u'Bitte eine Kontaktadresse angeben, danke!')
+            # return redirect(url_for('show_index'))
 
         image = request.files['image'] if 'image' in request.files else None
         if image and allowed_file(image.filename):
@@ -529,8 +530,8 @@ def add_user():
         else:
             filename = None
 
-        cur.execute('INSERT INTO user (name, mail, image_path) VALUES (?, ?, ?)',
-                   [request.form['name'], request.form['mail'], filename])
+        cur.execute('INSERT INTO user (name, image_path, start_semester) VALUES (?, ?, ?)',
+                   [request.form['name'], filename, request.form['start_semester']])
         db.commit()
         return redirect(url_for('edit_userprofile', username=request.form['name']))
 

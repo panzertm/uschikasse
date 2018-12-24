@@ -39,7 +39,8 @@ CREATE TABLE IF NOT EXISTS `user` (
     `direct_payment`     INTEGER NOT NULL DEFAULT 0,
     `allow_edit_profile` INTEGER NOT NULL DEFAULT 1,
     `active`             INTEGER NOT NULL DEFAULT 1,
-    `tax`                INTEGER NOT NULL DEFAULT 0
+    `tax`                INTEGER NOT NULL DEFAULT 0,
+	`start_semester`     INTEGER
 );
 
 CREATE VIEW IF NOT EXISTS `account_valuable_balance` AS
@@ -102,9 +103,9 @@ INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`)
 INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`)
     VALUES ('Bankkonto', 0, 0, 0);
 INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`)
-    VALUES ('Lager+Kühlschrank', 0, 0, 0);
+    VALUES ('Lager & Kühlschrank', 0, 0, 0);
 INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`, `tax`)
-    VALUES ('Gäste', 0, 1, 0, 0);
+    VALUES ('Gaeste', 0, 1, 0, 0);
 
 INSERT INTO `unit` (`name`, `symbol`) VALUES ('Cent', '¢');
 INSERT INTO `unit` (`name`, `symbol`) VALUES ('Flasche', 'Fl.');
@@ -127,4 +128,3 @@ INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
 INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
     VALUES ('Kaffee', 1, 'Flasche', 50, 'products/kaffee.png');
 COMMIT;
-
