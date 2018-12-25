@@ -4,18 +4,18 @@
 <div class="main_wrapper" style="height:666px;" unselectable='on' onselectstart='return false;' onmousedown='return false;'>
 
 <div>
+  {% if admin_panel %}
   <a href="{{ url_for('graphs') }}">
-      <div class="user">
+      <div class="admin">
         <span class="user-image">
           <span class="new"><i class="fa fa-area-chart"></i></span>
         </span>
         <span class="name">Graphen</span>
         <span class="balance"></span>
       </div>
-    </a>
-  {% if admin_panel %}
+    </a>  
   <a href="{{ url_for('add_user', admin=admin_panel) }}">
-    <div class="user">
+    <div class="admin">
       <span class="user-image">
         <span class="new"><i class="fa fa-plus-circle"></i></span>
       </span>
@@ -24,7 +24,7 @@
     </div>
   </a>
   <a href="{{ url_for('activate_user', admin=admin_panel) }}">
-    <div class="user">
+    <div class="admin">
       <span class="user-image">
         <span class="new"><i class="fa fa-toggle-on"></i></span>
       </span>
@@ -33,7 +33,7 @@
     </div>
   </a>
   <a href="{{ url_for('admin_lagerbestand') }}">
-    <div class="user">
+    <div class="admin">
       <span class="user-image">
         <span class="new"><i class="fa fa-server"></i></span>
       </span>
@@ -42,7 +42,7 @@
     </div>
   </a>
   <a href="{{ url_for('admin_stats') }}">
-    <div class="user">
+    <div class="admin">
       <span class="user-image">
         <span class="new"><i class="fa fa-bar-chart"></i></span>
       </span>
@@ -54,18 +54,20 @@
     {% for user in users %}
     <a href="{{ url_for('show_userpage', admin=admin_panel, username=user.name) }}">
       <div class="user">
+	  {% if admin_panel %}
         <span class="user-prio">
           {% if user.prio %}
             {{ '%2.01f%%' % user.prio }}
           {% endif %}
+	  {% endif %}
         </span>
-        <span class="user-image">
-          {% if user.image_path %}
-          <img src="{{ url_for('static', filename=user.image_path) }}" />
-          {% else %}
-          <img src="/static/users/default_user.jpg" />
-          {% endif %}
-        </span>
+        <!-- <span class="user-image"> -->
+          <!-- {% if user.image_path %} -->
+          <!-- <img src="{{ url_for('static', filename=user.image_path) }}" /> -->
+          <!-- {% else %} -->
+          <!-- <img src="/static/users/default_user.svg" /> -->
+          <!-- {% endif %} -->
+        <!-- </span> -->
         <span class="name">{{ user.name }}</span>
         <span class="balance" {% if user.balance < 0.0 %}style="color: red;"{% endif %}>
             {{ '%.2f' % (user.balance / 100.0) }} €
@@ -73,7 +75,7 @@
       </div>
     </a>
     {% else %}
-    <em>Unbelievable. No users here so far.</em></li>
+    <em>No users here</em></li>
   {% endfor %}
 </div>
 
@@ -81,6 +83,6 @@
 
 <div class="bottom-big">
     <a href="{{ url_for('show_userpage', admin=admin_panel, username='Gäste') }}"><div class="guest-account"><i class="fa fa-users"></i> Gäste</div></a>
-   <a href="{{ url_for('show_userpage', admin=admin_panel, username='Materialsammlung') }}"><div class="free-account"><i class="fa fa-files-o"></i> Materialsammlung</div></a>
+   <!-- <a href="{{ url_for('show_userpage', admin=admin_panel, username='Materialsammlung') }}"><div class="free-account"><i class="fa fa-files-o"></i> Materialsammlung</div></a> -->
 </div>
 {% endblock %}

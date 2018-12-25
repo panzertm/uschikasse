@@ -12,7 +12,7 @@
       {% if user.image_path %}
       <img src="{{ url_for('static', filename=user.image_path) }}" />
       {% else %}
-      <img src="/static/users/default_user.jpg" />
+      <img src="/static/users/default_user.svg" />
       {% endif %}
       <span class="name">{{ user.name }}</span>
     </div>

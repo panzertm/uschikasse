@@ -1,8 +1,9 @@
-# FG-VIng - Getränkekasse  [in development Do not use in production - Fork is manly to change name and usecase]
+# FG-VIng - Getränkekasse
+This is a fork of the neat fsikasse. I did mainly optimise it four the use case of the Fachgruppe Verkehrsingenieurwesen at the University of Stuttgart.
 
 ## Description
 
-A neat little web application that manages the sale and stock of drinks and sweets. It is designed to run on a single machine, all users are expected to be trusted and "well behaved". It was meant to have (at least) the same feature set as the paper tally sheet, which it replaced.
+A neat little web application that manages the sale and stock of drinks and sweets. It is designed to run on a Windows 10 tablet with a resolution of 1920x1200 (Chuwi Hi8 Pro). All users are expected to be trusted and "well behaved". It was meant to have (at least) the same feature set as the paper tally sheet, which it replaced.
 
 ## Installation
 
@@ -17,12 +18,20 @@ Install dependencies:
 
 Setup fsikasse:
 
-    $ FLASK_APP=fsikasse.py flask initdb
+    $ FLASK_APP=vingkasse flask initdb
+	> set FLASK_APP=vingkasse
+	> flask initdb
 
 From now on it is sufficient to start fsikasse with:
 
-    $ FLASK_APP=fsikasse.py flask run
+    $ FLASK_APP=vingkasse flask run
+	> flask run
 
+To use the development environment:
+
+	$ FLASK_ENV=development
+	> set FLASK_ENV=development
+	
 ## Update (experimental)
 
 If you have cloned the repository, you can run the following commands to update the fsikasse:
