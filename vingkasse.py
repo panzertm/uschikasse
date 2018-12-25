@@ -26,6 +26,7 @@ import calendar
 
 from flask import Flask, request, session, g, redirect, url_for, abort, \
      render_template, flash
+from flask_basicauth import BasicAuth
 from werkzeug import secure_filename
 from PIL import Image
 app = Flask(__name__)
@@ -43,7 +44,11 @@ app.config.update(dict(
     CASH_IN_ACCOUNT = (1, 'Graue Kasse'),
     MONEY_VALUABLE_ID = 1,
     SECRET_KEY='development key',
+    BASIC_AUTH_USERNAME = 'admin',
+    BASIC_AUTH_PASSWORD = 'klassestattmasse',
 ))
+
+basic_auth = BasicAuth(app)
 
 def randomword(length):
    return ''.join(random.choice(string.ascii_lowercase) for i in range(length))
@@ -90,9 +95,10 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
-
-@app.route('/')
-def show_index():
+@app.route('/semester/<semester>')
+def show_semesterpage(semester):
+    db = get_db()
+    cur = db.cursor()
     db = get_db()
     cur = db.execute("""
 SELECT name, 
@@ -100,14 +106,26 @@ SELECT name,
     WHEN balance<-1000 then 'users/shame.gif'
     ELSE image_path
     END AS image_path,
-balance, umsatz * 100.0 / (SELECT SUM(umsatz) FROM `index`) AS prio FROM `index`""")
+balance, umsatz * 100.0 / (SELECT SUM(umsatz) FROM `index`) AS prio FROM `index` WHERE start_semester =?""", [semester])
     users = cur.fetchall()
     cur = db.execute('SELECT substr(datetime,0,11) as date, to_name as name FROM stats WHERE valuable_id != 1 AND to_id != 4 LIMIT 999,1')
     purchase = cur.fetchone()
 
-    return render_template('start.html', title="Benutzerübersicht", users=users, purchase=purchase)
+    return render_template('semester.html', title="Semesterübersicht", users=users, purchase=purchase)
+
+
+@app.route('/')
+def show_index():
+    db = get_db()
+    cur = db.execute("""SELECT DISTINCT start_semester FROM `index` ORDER BY start_semester ASC""")
+    start_semesters = cur.fetchall()
+    cur = db.execute('SELECT substr(datetime,0,11) as date, to_name as name FROM stats WHERE valuable_id != 1 AND to_id != 4 LIMIT 999,1')
+    purchase = cur.fetchone()
+
+    return render_template('start.html', title="Benutzerübersicht", semesters=start_semesters, purchase=purchase)
 
 @app.route('/admin', methods=['GET'])
+@basic_auth.required
 def admin_index():
     db = get_db()
     cur = db.execute("""
@@ -121,7 +139,7 @@ balance, umsatz * 100.0 / (SELECT SUM(umsatz) FROM `index`) AS prio FROM `index`
     cur = db.execute('SELECT substr(datetime,0,11) as date, to_name as name FROM stats WHERE valuable_id != 1 AND to_id != 4 LIMIT 999,1')
     purchase = cur.fetchone()
 
-    return render_template('start.html', title="Benutzerübersicht", admin_panel=True, users=users, purchase=purchase)
+    return render_template('admin_start.html', title="Benutzerübersicht", admin_panel=True, users=users, purchase=purchase)
 
 @app.route('/admin/lager', methods=['GET'])
 def admin_lagerbestand():
@@ -499,7 +517,7 @@ def add_user(): # check for user name already taken bevor pusing into db
         if request.form['name'] == '':
             flash(u'Bitte einen Namen angeben, danke!')
             return redirect(url_for('show_index'))
-		
+        
 
         # if request.form['mail'] == '' or not EMAIL_REGEX.match(request.form['mail']):
             # flash(u'Bitte eine Kontaktadresse angeben, danke!')
@@ -530,10 +548,16 @@ def add_user(): # check for user name already taken bevor pusing into db
         else:
             filename = None
 
-        cur.execute('INSERT INTO user (name, image_path, start_semester) VALUES (?, ?, ?)',
-                   [request.form['name'], filename, request.form['start_semester']])
-        db.commit()
-        return redirect(url_for('edit_userprofile', username=request.form['name']))
+        try: # try to insert new user name
+            cur.execute('INSERT INTO user (name, image_path, start_semester) VALUES (?, ?, ?)',
+                   [request.form['name'], filename, request.form['start_semester']])        
+            db.commit()
+            return redirect(url_for('edit_userprofile', username=request.form['name']))
+        except sqlite3.IntegrityError:
+            flash(u'Diese Nutzername existiert bereits, bitte wähle einen anderen!')
+			
+            return render_template('add_user.html', title="Benutzer hinzufügen", admin_panel=True)
+            
 
 @app.route('/user/<username>/add', methods=['POST'])
 def add_to_account(username):

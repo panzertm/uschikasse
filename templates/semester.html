@@ -51,11 +51,29 @@
     </div>
   </a>
   {% endif %}
-    {% for semester in semesters %}
-    <a href="{{ url_for('show_semesterpage', admin=admin_panel, semester=semester.start_semester) }}">
-      <div class="semester">
-		<span class="name">{{ semester.start_semester }}</span>
-	   </div>
+    {% for user in users %}
+    <a href="{{ url_for('show_userpage', admin=admin_panel, username=user.name) }}">
+      <div class="user">
+	  {% if admin_panel %}
+        <span class="user-prio">
+          {% if user.prio %}
+            {{ '%2.01f%%' % user.prio }}
+          {% endif %} </span>
+	  {% endif %}
+        
+        <!-- <span class="user-image"> -->
+          <!-- {% if user.image_path %} -->
+          <!-- <img src="{{ url_for('static', filename=user.image_path) }}" /> -->
+          <!-- {% else %} -->
+          <!-- <img src="/static/users/default_user.svg" /> -->
+          <!-- {% endif %} -->
+        <!-- </span> -->
+        <span class="name">{{ user.name }}</span>
+        <span class="balance" {% if user.balance < 0.0 %}style="color: red;"{% endif %}>
+            {{ '%.2f' % (user.balance / 100.0) }} €
+        </span>
+      </div>
+    </a>
     {% else %}
     <em>No users here</em></li>
   {% endfor %}

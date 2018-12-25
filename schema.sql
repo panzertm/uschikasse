@@ -76,9 +76,9 @@ CREATE VIEW IF NOT EXISTS `stats` AS
     WHERE visible = 1
     ORDER BY strftime("%s", datetime) DESC;
 
--- view for front page
+-- view for semester page
 CREATE VIEW IF NOT EXISTS `index` AS
-    SELECT user.name AS name, image_path, balance, umsatz
+    SELECT user.name AS name, image_path, balance, umsatz, start_semester
     FROM user
     INNER JOIN account_valuable_balance AS avb ON user.account_id = avb.account_id
     LEFT JOIN (
@@ -99,33 +99,33 @@ CREATE VIEW IF NOT EXISTS `index` AS
     ORDER BY umsatz DESC, name ASC;
 
 	
-INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`)
+INSERT OR IGNORE INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`)
     VALUES ('Graue Kasse', 0, 0, 0);
-INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`)
+INSERT OR IGNORE INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`)
     VALUES ('Bankkonto', 0, 0, 0);
-INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`)
+INSERT OR IGNORE INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`)
     VALUES ('Lager & Kühlschrank', 0, 0, 0);
-INSERT INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`, `tax`)
+INSERT OR IGNORE INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit_profile`, `tax`)
     VALUES ('Gäste', 0, 1, 0, 0);
 
-INSERT INTO `unit` (`name`, `symbol`) VALUES ('Cent', '¢');
-INSERT INTO `unit` (`name`, `symbol`) VALUES ('Flasche', 'Fl.');
-INSERT INTO `unit` (`name`, `symbol`) VALUES ('Stück', 'Stk.');
+INSERT OR IGNORE INTO `unit` (`name`, `symbol`) VALUES ('Cent', '¢');
+INSERT OR IGNORE INTO `unit` (`name`, `symbol`) VALUES ('Flasche', 'Fl.');
+INSERT OR IGNORE INTO `unit` (`name`, `symbol`) VALUES ('Stück', 'Stk.');
 
-INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`, `product`)
+INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`, `product`)
     VALUES ('Euro', 1, 'Cent', 1, NULL, 0);
-INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
+INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
     VALUES ('Bier (0,5)', 1, 'Flasche', 100, 'products/bier_05.jpg');
-INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
+INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
     VALUES ('Bier (0,3)', 1, 'Flasche', 70, 'products/bier_03.jpg');
-INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
+INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
     VALUES ('Radler', 1, 'Flasche', 70, 'products/radler.jpg');
-INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
+INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
     VALUES ('Spezi', 1, 'Flasche', 70, 'products/spezi.jpg');
-INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
+INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
     VALUES ('Cola', 1, 'Flasche', 100, 'products/cola.png');
-INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
+INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
     VALUES ('Mate', 1, 'Flasche', 70, 'products/Loscher-Club-Mate.png');
-INSERT INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
+INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
     VALUES ('Kaffee', 1, 'Flasche', 50, 'products/kaffee.jpg');
 COMMIT;

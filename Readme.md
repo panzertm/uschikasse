@@ -9,14 +9,14 @@ A neat little web application that manages the sale and stock of drinks and swee
 
 Install dependencies:
 
-    $ pip install -U Flask Pillow Pandas Matplotlib
+    $ pip install -U Flask Flask-BasicAuth Pillow Pandas Matplotlib
 
 [Download](https://github.com/legeiger/ving-kasse/archive/master.zip) and extract ving-kasse or clone the git repository.
 
     $ git clone https://github.com/legeiger/ving-kasse.git
     $ cd ving-kasse
 
-Setup fsikasse:
+Setup vingkasse:
 
     $ FLASK_APP=vingkasse flask initdb
 	> set FLASK_APP=vingkasse
