@@ -12,7 +12,7 @@
 <h1>
   <table class="header" style="width:100%;table-layout:fixed">
     <tr>
-      <td style="width:35%">{{ title }}:</td>
+      <td style="width:60%">{{ title }}:</td>
       <td style="width:50%;text-align:center;white-space:nowrap;text-overflow:ellipsis;">
         {% if purchase %}1000. Einkauf: {{ purchase.date }} {{ purchase.name }}{% endif %}
       </td>
@@ -60,11 +60,11 @@
 
 <div class="footer">
   {% if return_to_userpage == True %}
-  	<a href="{{ url_for('show_userpage', username=user.name) }}" class="back"><i class="fa fa-arrow-circle-o-left"></i> zurück</a>
+  	<a href="{{ url_for('show_userpage', username=user.name) }}" class="back"><i class="far fa-arrow-alt-circle-left"></i> zurück</a>
   {% elif admin_panel == True %}
-    <a href="{{ url_for('admin_index') }}" class="back"><i class="fa fa-arrow-circle-o-left"></i> zurück</a>
+    <a href="{{ url_for('admin_index') }}" class="back"><i class="far fa-arrow-alt-circle-left"></i> zurück</a>
   {% elif return_to_index == True %}
-    <a href="{{ url_for('show_index') }}" class="back"><i class="fa fa-arrow-circle-o-left"></i> zurück</a>
+    <a href="{{ url_for('show_index') }}" class="back"><i class="far fa-arrow-alt-circle-left"></i> zurück</a>
   {% endif %}
 </div>
 </body>

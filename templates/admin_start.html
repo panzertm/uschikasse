@@ -8,7 +8,7 @@
   <a href="{{ url_for('graphs') }}">
       <div class="admin">
         <span class="user-image">
-          <span class="new"><i class="fa fa-area-chart"></i></span>
+          <span class="new"><i class="fas fa-chart-area"></i></span>
         </span>
         <span class="name">Graphen</span>
         <span class="balance"></span>
@@ -44,7 +44,7 @@
   <a href="{{ url_for('admin_stats') }}">
     <div class="admin">
       <span class="user-image">
-        <span class="new"><i class="fa fa-bar-chart"></i></span>
+        <span class="new"><i class="far fa-chart-bar"></i></span>
       </span>
       <span class="name">Statistiken</span>
       <span class="balance"></span>
@@ -83,6 +83,11 @@
 
 <div class="bottom-big">
     <a href="{{ url_for('show_userpage', admin=admin_panel, username='Gäste') }}"><div class="guest-account"><i class="fa fa-users"></i> Gäste</div></a>
-   <!-- <a href="{{ url_for('show_userpage', admin=admin_panel, username='Materialsammlung') }}"><div class="free-account"><i class="fa fa-files-o"></i> Materialsammlung</div></a> -->
+    <a href="http://user:pass@localhost:5000"><div class="free-account">
+	{% if admin_panel %}
+		<i class="fas fa-sign-out-alt"></i> Logout</div></a>
+	{% else %}
+		<i class="fa fa-user-cog"></i> Logout</div></a>
+	{% endif %}
 </div>
 {% endblock %}

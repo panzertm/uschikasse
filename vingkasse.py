@@ -44,8 +44,8 @@ app.config.update(dict(
     CASH_IN_ACCOUNT = (1, 'Graue Kasse'),
     MONEY_VALUABLE_ID = 1,
     SECRET_KEY='development key',
-    BASIC_AUTH_USERNAME = 'admin',
-    BASIC_AUTH_PASSWORD = 'klassestattmasse',
+    BASIC_AUTH_USERNAME = 'ad',
+    BASIC_AUTH_PASSWORD = '1234', # change!!
 ))
 
 basic_auth = BasicAuth(app)
@@ -111,7 +111,7 @@ balance, umsatz * 100.0 / (SELECT SUM(umsatz) FROM `index`) AS prio FROM `index`
     cur = db.execute('SELECT substr(datetime,0,11) as date, to_name as name FROM stats WHERE valuable_id != 1 AND to_id != 4 LIMIT 999,1')
     purchase = cur.fetchone()
 
-    return render_template('semester.html', title="Semesterübersicht", users=users, purchase=purchase)
+    return render_template('semester.html', title="Semesterübersicht", users=users, purchase=purchase,return_to_index=True)
 
 
 @app.route('/')
@@ -122,7 +122,7 @@ def show_index():
     cur = db.execute('SELECT substr(datetime,0,11) as date, to_name as name FROM stats WHERE valuable_id != 1 AND to_id != 4 LIMIT 999,1')
     purchase = cur.fetchone()
 
-    return render_template('start.html', title="Benutzerübersicht", semesters=start_semesters, purchase=purchase)
+    return render_template('start.html', title="Semesterübersicht", semesters=start_semesters, purchase=purchase)
 
 @app.route('/admin', methods=['GET'])
 @basic_auth.required
@@ -589,7 +589,7 @@ def add_to_account(username):
     db.commit()
     flash(u'Danke für das Geld :)')
 
-    return redirect(url_for('show_index'))
+    return redirect(url_for('show_userpage', username=username))
 
 @app.route('/user/<username>/sub', methods=['POST'])
 def sub_from_account(username):
