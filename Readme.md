@@ -1,5 +1,5 @@
 # FG-VIng - Getränkekasse
-This is a fork of the neat fsikasse. I did mainly optimise it four the use case of the Fachgruppe Verkehrsingenieurwesen at the University of Stuttgart.
+This is a fork of the neat fsikasse. Mainly it was optimised for the use case of the "Fachgruppe Verkehrsingenieurwesen" at the University of Stuttgart.
 
 ## Description
 
@@ -22,7 +22,7 @@ Setup vingkasse:
 	> set FLASK_APP=vingkasse
 	> flask initdb
 
-From now on it is sufficient to start fsikasse with:
+From now on it is sufficient to start vingkasse with:
 
     $ FLASK_APP=vingkasse flask run
 	> flask run

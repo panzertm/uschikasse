@@ -111,6 +111,7 @@ INSERT OR IGNORE INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit
 INSERT OR IGNORE INTO `unit` (`name`, `symbol`) VALUES ('Cent', '¢');
 INSERT OR IGNORE INTO `unit` (`name`, `symbol`) VALUES ('Flasche', 'Fl.');
 INSERT OR IGNORE INTO `unit` (`name`, `symbol`) VALUES ('Stück', 'Stk.');
+INSERT OR IGNORE INTO `unit` (`name`, `symbol`) VALUES ('Tasse', 'Tas.');
 
 INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`, `product`)
     VALUES ('Euro', 1, 'Cent', 1, NULL, 0);
@@ -127,5 +128,7 @@ INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image
 INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
     VALUES ('Mate', 1, 'Flasche', 70, 'products/Loscher-Club-Mate.png');
 INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
-    VALUES ('Kaffee', 1, 'Flasche', 50, 'products/kaffee.jpg');
+    VALUES ('Kaffee', 1, 'Tasse', 50, 'products/kaffee.jpg');
+INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
+    VALUES ('Pizzastück', 0, 'Stück', 50, 'products/pizza.jpg');
 COMMIT;

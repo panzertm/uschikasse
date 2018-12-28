@@ -78,10 +78,10 @@ div.footer
 
 div.footer .back
 {
-	position: relative;
+	position: absolute;
 	display: inline-block; 
 	min-width: 100px;
-
+	bottom: 0px;
 	font-size: 20px;
 	line-height: 50px;
 
@@ -529,8 +529,8 @@ div.products
 	overflow-y: scroll;
 	
 	width: calc(75% - 1px - 5px - 5px );
-	min-height: calc( 100vh - 51px - 52px );
-	max-height: calc( 100vh - 51px - 52px );
+	/* min-height: calc( 100vh - 51px - 52px ); */
+	/* max-height: calc( 100vh - 51px - 52px ); look into this - is this really necessary? */
 	margin: 0;
 	padding: 0;
 }
@@ -635,8 +635,8 @@ div.prod .price
 div.bottom-big
 {
 	position: absolute;
-	z-index: 999;
-	bottom: 0;
+	z-index: 1000;
+	bottom: 0px;
 
 	width: 100%;
 	margin: 0;
@@ -646,7 +646,9 @@ div.bottom-big
 }
 
 div.bottom-big div.guest-account,
-div.bottom-big div.free-account
+div.bottom-big div.free-account,
+div.bottom-big .back-button,
+div.bottom-big div.pizza-button
 {
 	font-size: 26px;
 	line-height: 30px;
@@ -673,6 +675,13 @@ div.bottom-big div.free-account
 	float: right;
 
 	margin-right: 5%;
+}
+
+div.bottom-big .back-button
+{
+	float: left;
+
+	margin-left: 1%;
 }
 
 div.add_user

@@ -58,13 +58,13 @@
 
 {% block body %}Nichts zu sehen.{% endblock %}
 
-<div class="footer">
+<div class="bottom-big">
   {% if return_to_userpage == True %}
-  	<a href="{{ url_for('show_userpage', username=user.name) }}" class="back"><i class="far fa-arrow-alt-circle-left"></i> zurück</a>
+  	<a href="{{ url_for('show_userpage', username=user.name) }}" class="back-button"><i class="far fa-arrow-alt-circle-left"></i> zurück</a>
   {% elif admin_panel == True %}
-    <a href="{{ url_for('admin_index') }}" class="back"><i class="far fa-arrow-alt-circle-left"></i> zurück</a>
+    <a href="{{ url_for('admin_index') }}" class="back-button"><i class="far fa-arrow-alt-circle-left"></i> zurück</a>
   {% elif return_to_index == True %}
-    <a href="{{ url_for('show_index') }}" class="back"><i class="far fa-arrow-alt-circle-left"></i> zurück</a>
+    <a href="{{ url_for('show_index') }}" class="back-button"><i class="far fa-arrow-alt-circle-left"></i> zurück</a>
   {% endif %}
 </div>
 </body>
