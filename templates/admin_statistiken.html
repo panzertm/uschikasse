@@ -23,7 +23,7 @@
     <td class="number">{{ t.amount }}</td>
     <td>{{ t.unit_name }}</td>
     <td>{{ t.from_name}}</td>
-    <td><i class="fa fa-long-arrow-right"></i></td>
+    <td><i class="fas fa-long-arrow-alt-right"></i></td>
     <td>{{ t.to_name }}</td>
     <td><a href="{{ url_for('cancle_transaction', username=t.to_name, transaction_id=t.transaction_id)}}">Stornieren</a></td>
   </tr>

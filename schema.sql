@@ -111,7 +111,7 @@ INSERT OR IGNORE INTO `user` (`name`, `browsable`, `direct_payment`, `allow_edit
 INSERT OR IGNORE INTO `unit` (`name`, `symbol`) VALUES ('Cent', '¢');
 INSERT OR IGNORE INTO `unit` (`name`, `symbol`) VALUES ('Flasche', 'Fl.');
 INSERT OR IGNORE INTO `unit` (`name`, `symbol`) VALUES ('Stück', 'Stk.');
-INSERT OR IGNORE INTO `unit` (`name`, `symbol`) VALUES ('Tasse', 'Tas.');
+INSERT OR IGNORE INTO `unit` (`name`, `symbol`) VALUES ('Tasse', '☕');
 
 INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`, `product`)
     VALUES ('Euro', 1, 'Cent', 1, NULL, 0);

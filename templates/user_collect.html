@@ -15,7 +15,7 @@
     </div>
     <ul>
       <li>Beschreibung:
-        <input type="text" name="comment" />
+        <input id="keyboard" type="text" name="comment" />
       </li>
       <li>Gesamtbetrag:
         <input type="number" class="input_number" id="sub_from_account_amount" min="0" step="0.01" name="amount" value="0.00" onFocus="numpadShow(this.id);" />
@@ -33,4 +33,10 @@
     </select>
   </div>
 </form>
+<script>
+ $(document).ready(function() {	
+	  $('#keyboard').getkeyboard().reveal();
+	});
+	});
+</script>
 {% endblock %}

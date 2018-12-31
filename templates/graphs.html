@@ -2,11 +2,8 @@
 {% block body %}
 <div class="main_wrapper" style="height:666px;" unselectable='on' onselectstart='return false;' onmousedown='return false;'>
 
-<table style="width:100%">
-  <tr>
-    <td>
-      <table class="balance" style="width:10cm">
-        <caption><h2>Gekaufte Produkte (14 Tage)</h2></caption>
+<table class="balance" style="width:10cm">
+    <caption><h2>Gekaufte Produkte (14 Tage)</h2></caption>
         <tr>
           <th>Produkt</th>
           <th>Menge</th>
@@ -19,7 +16,10 @@
         {% endfor %}
       </table>
     </td>
-    <td>
+	</table>
+<table style="width: 100%">
+  <tr>
+	<td>
       {% for svg in svgs %}
       {{ svg|safe }}
       {% endfor %}

@@ -6,9 +6,11 @@
   <form action="{{ url_for('add_user') }}" method="post" class="add-entry" enctype="multipart/form-data">
     <dl>
       <dt>Name:</dt>
-      <dd><input class="form_input" type="text" size="30" name="name" required/></dd>
+      <dd><input id="keyboard" class="form_input" type="text" size="30" name="name" required/></dd>
       <dt>Semester:</dt> 
       <dd> <select id="start_semester" type="text" size="1" name="start_semester" required>
+		  <option value="2012">Semester 2012</option>
+		  <option value="2013">Semester 2013</option>
 		  <option value="2014">Semester 2014</option>
 		  <option value="2015">Semester 2015</option>
 		  <option value="2016">Semester 2016</option>
@@ -25,5 +27,11 @@
     </dl>
   </form>
 </div>
+<script>
+ $(document).ready(function() {	
+	  $('#keyboard').getkeyboard().reveal();
+	});
+	});
+</script>
 
 {% endblock %}

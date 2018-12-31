@@ -52,7 +52,7 @@
   </a>
   {% endif %}
     {% for semester in semesters %}
-    <a href="{{ url_for('show_semesterpage', admin=admin_panel, semester=semester.start_semester) }}">
+    <a href="{{ url_for('show_semesterpage', return_to_index=True, semester=semester.start_semester) }}">
       <div class="semester">
 		<span class="name">{{ semester.start_semester }}</span>
 	   </div>

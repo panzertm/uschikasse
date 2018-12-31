@@ -40,7 +40,7 @@ app.config.update(dict(
     ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif']),
     PROFILE_IMAGE_SIZE = (150, 200),
     ITEM_IMAGE_SIZE = (150, 300),
-    STORAGE_ACCOUNT = (4, 'Lager & Kühlschrank'),
+    STORAGE_ACCOUNT = (3, 'Lager & Kühlschrank'),
     CASH_IN_ACCOUNT = (1, 'Graue Kasse'),
     MONEY_VALUABLE_ID = 1,
     SECRET_KEY='development key',
@@ -142,6 +142,7 @@ balance, umsatz * 100.0 / (SELECT SUM(umsatz) FROM `index`) AS prio FROM `index`
     return render_template('admin_start.html', title="Benutzerübersicht", admin_panel=True, users=users, purchase=purchase)
 
 @app.route('/admin/lager', methods=['GET'])
+@basic_auth.required
 def admin_lagerbestand():
     db = get_db()
     if request.method == 'GET':
@@ -153,6 +154,7 @@ def admin_lagerbestand():
     return redirect(url_for('admin_index'))
 
 @app.route('/admin/lieferung', methods=['GET', 'POST'])
+@basic_auth.required
 def admin_lieferung():
     db = get_db()
     cur = db.execute(
@@ -181,6 +183,7 @@ def admin_lieferung():
         return redirect(url_for('admin_index'))
 
 @app.route('/admin/edit/<item_name>')
+@basic_auth.required
 def admin_edit_item(item_name):
     db = get_db()
     cur = db.execute( 'SELECT name, active, unit_name, price, image_path, product FROM valuable WHERE name=?', [item_name])
@@ -192,6 +195,7 @@ def admin_edit_item(item_name):
     return render_template('admin_edit_item.html', title="Ware bearbeiten", admin_panel=True, item=valuable, units=units )
 
 @app.route('/admin/edit/<item_name>/change_properties', methods=['POST'])
+@basic_auth.required
 def edit_item_properties(item_name):
     db = get_db()
     cur = db.execute( 'SELECT name, active, unit_name, price, image_path, product FROM valuable WHERE name=?', [item_name])
@@ -240,6 +244,7 @@ def edit_item_properties(item_name):
     return redirect(url_for('admin_index'))
 
 @app.route('/admin/add_item')
+@basic_auth.required
 def admin_add_item():
     db = get_db()
     cur = db.execute( 'SELECT * FROM unit' )
@@ -247,6 +252,7 @@ def admin_add_item():
     return render_template('admin_add_item.html', title="Ware hinzufügen", admin_panel=True, units=units )
 
 @app.route('/admin/add_item/new', methods=['POST'])
+@basic_auth.required
 def add_item():
     if request.form['name'] == '' or request.form['name'] == 'New Item':
         flash(u'Please specify a name!')
@@ -294,6 +300,7 @@ def add_item():
     return redirect(url_for('admin_index'))
 
 @app.route('/admin/stats', methods=['GET'])
+@basic_auth.required
 def admin_stats():
     db = get_db()
     if request.method == 'GET':
@@ -450,10 +457,11 @@ def edit_userprofile(username):
     else:  # request.method == 'POST':
         if not user['allow_edit_profile']:
             abort(403)
-
-        if request.form['mail'] == '' or not EMAIL_REGEX.match(request.form['mail']):
-            flash(u'Bitte eine korrekte Kontaktadresse angeben, danke!')
-            return redirect(url_for('edit_userprofile', username=user['name']))
+        
+        request.form['mail'] == None
+        # if request.form['mail'] == '' or not EMAIL_REGEX.match(request.form['mail']):
+            # flash(u'Bitte eine korrekte Kontaktadresse angeben, danke!')
+            # return redirect(url_for('edit_userprofile', username=user['name']))
 
         filename = user['image_path']
         if 'image' in request.files and request.files['image'].filename != '':
@@ -673,7 +681,7 @@ LIMIT 365
 
     df['date'] = df['date'].astype('datetime64[D]')
     df = df.resample('D', on='date').sum().reset_index()
-    df.plot(x='date', y='amount', figsize=[12.8, 4.8], label='', legend=False, title='Purchases per day (last 365 days)')
+    df.plot(x='date', y='amount', figsize=[10, 4.8], label='', legend=False, title='Purchases per day (last 365 days)')
     plt.gca().xaxis.label.set_visible(False)
     imgdata = io.StringIO()
     plt.savefig(imgdata, format='svg', bbox_inches='tight')

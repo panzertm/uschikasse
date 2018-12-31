@@ -3,9 +3,21 @@
 <title>VIng Tablet Kasse</title>
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='font-awesome.min.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jquery-ui.min.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='keyboard.css') }}">
 <link rel="icon" href="data:,"> <!-- prevent favico request --> 
 <script type="text/javascript" src="{{ url_for('static', filename='js/numpad.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-latest.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.keyboard.js') }}"></script>
+<script>
+		$(function(){
+			$('#keyboard').keyboard();
+		});
+	</script>
+
+
 {% block head %} {% endblock %}
 <body>
 
@@ -58,13 +70,13 @@
 
 {% block body %}Nichts zu sehen.{% endblock %}
 
-<div class="bottom-big">
+<div class="footer">
   {% if return_to_userpage == True %}
-  	<a href="{{ url_for('show_userpage', username=user.name) }}" class="back-button"><i class="far fa-arrow-alt-circle-left"></i> zurück</a>
+  	<a href="{{ url_for('show_userpage', username=user.name) }}" class="back"><i class="far fa-arrow-alt-circle-left"></i> zurück</a>
   {% elif admin_panel == True %}
-    <a href="{{ url_for('admin_index') }}" class="back-button"><i class="far fa-arrow-alt-circle-left"></i> zurück</a>
+    <a href="{{ url_for('admin_index') }}" class="back"><i class="far fa-arrow-alt-circle-left"></i> zurück</a>
   {% elif return_to_index == True %}
-    <a href="{{ url_for('show_index') }}" class="back-button"><i class="far fa-arrow-alt-circle-left"></i> zurück</a>
+    <a href="{{ url_for('show_index') }}" class="back"><i class="far fa-arrow-alt-circle-left"></i> zurück</a>
   {% endif %}
 </div>
 </body>

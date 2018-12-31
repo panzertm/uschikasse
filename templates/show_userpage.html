@@ -15,6 +15,8 @@
       <img src="/static/users/default_user.svg" />
       {% endif %}
       <span class="name">{{ user.name }}</span>
+	  <span class="balance" {% if balance[0] < 0.0 %}style="color: red;"{% endif %}> {{ '%.2f' % (balance[0] / 100.0) }} €
+        </span>
 	  <span class="name" style="font-size: 22px">Semester: {{ user.start_semester }}</span>
     </div>
   </a>
@@ -48,6 +50,7 @@
         <input type="submit" value="Einsammeln" />
       </form>
     </li>
+	<li></li><li></li>
     {% endif %}
   </ul>
 </div>

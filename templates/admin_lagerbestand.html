@@ -20,9 +20,9 @@
     <td>{{ b.unit_name}}</td>
     <td>
       {% if b.valuable_name|string() == "Euro" %}
-      <i class="fa fa-money" />
+      <i class="far fa-money-bill-alt" />
       {% else %}
-      <a class="fa fa-pencil" href="{{ url_for('admin_edit_item', admin=admin_panel, item_name=b.valuable_name, item_id=b.valuable_id) }}"> </a>
+      <a class="fas fa-pencil-alt" href="{{ url_for('admin_edit_item', admin=admin_panel, item_name=b.valuable_name, item_id=b.valuable_id) }}"> </a>
       {% endif %}
     </td>
   </tr>
