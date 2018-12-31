@@ -34,7 +34,7 @@ To use the development environment:
 	
 ## Update (experimental)
 
-If you have cloned the repository, you can run the following commands to update the fsikasse:
+If you have cloned the repository, you can run the following commands to update the vingkasse:
 
     $ pip install -U Flask
     $ pip install -U Pillow

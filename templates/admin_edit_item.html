@@ -13,7 +13,7 @@
     <table>
       <tr>
         <td>Name:</td>
-        <td><input type="text" size="15" name="name" value="{{ item.name }}" /></td>
+        <td><input id="ipad-email" type="text" size="15" name="name" value="{{ item.name }}" /></td>
       </tr>
       <tr>
         <td>Price:</td>
@@ -50,5 +50,12 @@
   </form>
 
 </div>
+
+<script>
+ $(document).ready(function() {	
+	  $('#ipad-email').getkeyboard().reveal();		
+	});
+	});
+</script>
 
 {% endblock %}

@@ -17,9 +17,9 @@
   <tr>
     <td>{{ v.valuable_name }}</td>
     <td class="number">{{ v.balance }}</td>
-    <td>{{ v.unit_name}}</td>
-    <td><input type="number" style="font-size: 20px" class="input_number" min="0" max="1000" step="1" name="{{ v.valuable_name }}" value="0" /></td>
-  </tr>
+    <td>{{ v.unit_name }}</td>
+    <td><input id="num" type="number" style="font-size: 20px" class="input_number ui-keyboard-input ui-widget-content ui-corner-all ui-keyboard-autoaccepted" min="0" max="1000" step="1" name="{{ v.valuable_name }}" value="0" /></td>
+  </tr> 
   {% else %}
   <tr>
     <td><em>No valueables here so far.</em></td>
@@ -36,5 +36,12 @@
 </table>
 </form>
 </div>
+<script>
+ $(document).ready(function() {	
+	  $('#num').getkeyboard().reveal();
+	  $('#num').getkeyboard().reveal();	  
+	});	
+</script>
+
 
 {% endblock %}
