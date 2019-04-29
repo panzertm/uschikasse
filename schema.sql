@@ -116,13 +116,13 @@ INSERT OR IGNORE INTO `unit` (`name`, `symbol`) VALUES ('Tasse', '☕');
 INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`, `product`)
     VALUES ('Euro', 1, 'Cent', 1, NULL, 0);
 INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
-    VALUES ('Bier (0,5)', 1, 'Flasche', 100, 'products/bier_05.jpg');
+    VALUES ('Bier (0,5)', 1, 'Flasche', 100, 'products/bier_05.png');
 INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
-    VALUES ('Bier (0,3)', 1, 'Flasche', 70, 'products/bier_03.jpg');
+    VALUES ('Bier (0,3)', 1, 'Flasche', 70, 'products/bier_03.png');
 INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
-    VALUES ('Radler', 1, 'Flasche', 70, 'products/radler.jpg');
+    VALUES ('Radler', 1, 'Flasche', 70, 'products/radler.png');
 INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
-    VALUES ('Spezi', 1, 'Flasche', 70, 'products/spezi.jpg');
+    VALUES ('Spezi', 1, 'Flasche', 70, 'products/spezi.png');
 INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
     VALUES ('Cola', 1, 'Flasche', 100, 'products/cola.png');
 INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
@@ -131,4 +131,6 @@ INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image
     VALUES ('Kaffee', 1, 'Tasse', 50, 'products/kaffee.jpg');
 INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
     VALUES ('Pizzastück', 0, 'Stück', 50, 'products/pizza.jpg');
+INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
+    VALUES ('Eis', 0, 'Stück', 60, 'products/magnum.png');
 COMMIT;
