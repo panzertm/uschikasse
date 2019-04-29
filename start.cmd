@@ -1,8 +1,7 @@
 set FLASK_APP=vingkasse
-set FLASK_ENV=development
+REM set FLASK_ENV=development
 flask initdb
-flask run
-
+flask run --host=0.0.0.0
 
 :End
 cmd /k
