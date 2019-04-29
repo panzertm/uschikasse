@@ -130,7 +130,7 @@ INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image
 INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
     VALUES ('Kaffee', 1, 'Tasse', 50, 'products/kaffee.jpg');
 INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
-    VALUES ('Pizzastück', 0, 'Stück', 50, 'products/pizza.jpg');
+    VALUES ('Pizzastück', 1, 'Stück', 50, 'products/pizza.jpg');
 INSERT OR IGNORE INTO `valuable` (`name`, `active`, `unit_name`, `price`, `image_path`)
-    VALUES ('Eis', 0, 'Stück', 60, 'products/magnum.png');
+    VALUES ('Eis', 1, 'Stück', 60, 'products/magnum.png');
 COMMIT;
