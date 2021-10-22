@@ -20,13 +20,10 @@
 	<input type="hidden" class="input_text" size="30" name="mail" value="{{ user.mail }}" />
     <li>Bild ändern:<input type="file" name="image" /></li>
 	<li>Semester ändern:<select class="input_text" id="start_semester" type="text" size="1" name="start_semester" value="{{ user.start_semester }}">
-		  <option value="2014">Semester 2014</option>
-		  <option value="2015">Semester 2015</option>
-		  <option value="2016">Semester 2016</option>
-		  <option value="2017">Semester 2017</option>
-		  <option value="2018">Semester 2018</option>
-		  <option value="2019">Semester 2019</option>
-		  <option value="2020">Semester 2020</option>
+    {% for y in range(year-8, year+1) %}
+    <!-- 8 years backwards is hard coded in this -->
+      <option value="{{y}}">Semester {{ y }}</option>
+   {%endfor%}
 		</select></li>
 		 <script type="text/javascript">$("#start_semester").val({{ user.start_semester }}).change();</script>  <!-- changes the value for the option list to the value in the db. -->
     <li><input class="input_update" type="submit" value="Update Profile" /></li>

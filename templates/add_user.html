@@ -9,7 +9,11 @@
       <dd><input id="keyboard" class="form_input" type="text" size="30" name="name" required/></dd>
       <dt>Semester:</dt> 
       <dd> <select id="start_semester" type="text" size="1" name="start_semester" required>
-		  <option value="2012">Semester 2012</option>
+		  {% for y in range(year-8, year+1) %}
+		  <!-- 8 years backwards is hard coded in this -->
+		  	<option value="{{y}}">Semester {{ y }}</option>
+		 {%endfor%}
+		  <!-- <option value="2012">Semester 2012</option>
 		  <option value="2013">Semester 2013</option>
 		  <option value="2014">Semester 2014</option>
 		  <option value="2015">Semester 2015</option>
@@ -17,7 +21,7 @@
 		  <option value="2017">Semester 2017</option>
 		  <option value="2018">Semester 2018</option>
 		  <option value="2019">Semester 2019</option>
-		  <option value="2020">Semester 2020</option>
+		  <option value="2020">Semester 2020</option> -->
 		</select></dd> 
 	  <!-- <dt>Mail:</dt> -->
       <!-- <dd><input class="form_input" type="text" size="30" name="mail" /></dd> -->

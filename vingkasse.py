@@ -3,13 +3,6 @@
 
 import sys
 
-# python3 workaround
-try:
-    reload(sys)
-    sys.setdefaultencoding('utf-8')
-except:
-    pass
-
 from sqlite3 import dbapi2 as sqlite3
 import os
 import io
@@ -27,7 +20,8 @@ import calendar
 from flask import Flask, request, session, g, redirect, url_for, abort, \
      render_template, flash
 from flask_basicauth import BasicAuth
-from werkzeug import secure_filename
+from werkzeug.utils import secure_filename
+from werkzeug.datastructures import  FileStorage
 from PIL import Image
 app = Flask(__name__)
 
@@ -108,10 +102,19 @@ SELECT name,
     END AS image_path,
 balance, umsatz * 100.0 / (SELECT SUM(umsatz) FROM `index`) AS prio FROM `index` WHERE start_semester =?""", [semester])
     users = cur.fetchall()
-    cur = db.execute('SELECT substr(datetime,0,11) as date, to_name as name FROM stats WHERE valuable_id != 1 AND to_id != 4 LIMIT 999,1')
-    purchase = cur.fetchone()
+    cur = db.execute("""SELECT "main"."stats".to_id as ID, "main"."stats".to_name as name, COUNT("main"."stats".to_name) as counter, user.start_semester FROM "main"."stats"
+                        INNER JOIN user
+                        ON "main"."stats".to_id = user.account_id
+                        WHERE datetime >= date('now','-1 month')
+                        AND datetime <= date('now')
+                        AND "from_id" LIKE '3'
+                        AND "valuable_name" LIKE '%Bier%'
+                        GROUP BY to_name
+                        ORDER BY COUNT(to_name) DESC
+                        LIMIT 1; """)    
+    bier = cur.fetchone()
 
-    return render_template('semester.html', title="Semesterübersicht", users=users, purchase=purchase, return_to_index=True)
+    return render_template('semester.html', title="Semesterübersicht", users=users, return_to_index=True, bier=bier) 
 
 
 @app.route('/')
@@ -119,10 +122,19 @@ def show_index():
     db = get_db()
     cur = db.execute("""SELECT DISTINCT start_semester FROM `index` ORDER BY start_semester ASC""")
     start_semesters = cur.fetchall()
-    cur = db.execute('SELECT substr(datetime,0,11) as date, to_name as name FROM stats WHERE valuable_id != 1 AND to_id != 4 LIMIT 999,1')
-    purchase = cur.fetchone()
+    cur = db.execute("""SELECT "main"."stats".to_id as ID, "main"."stats".to_name as name, COUNT("main"."stats".to_name) as counter, user.start_semester FROM "main"."stats"
+                        INNER JOIN user
+                        ON "main"."stats".to_id = user.account_id
+                        WHERE datetime >= date('now','-1 month')
+                        AND datetime <= date('now')
+                        AND "from_id" LIKE '3'
+                        AND "valuable_name" LIKE '%Bier%'
+                        GROUP BY to_name
+                        ORDER BY COUNT(to_name) DESC
+                        LIMIT 1; """)    
+    bier = cur.fetchone()
 
-    return render_template('start.html', title="Semesterübersicht", semesters=start_semesters, purchase=purchase)
+    return render_template('start.html', title="Semesterübersicht", semesters=start_semesters, bier=bier)
 
 @app.route('/admin', methods=['GET'])
 @basic_auth.required
@@ -136,10 +148,19 @@ SELECT name,
     END AS image_path,
 balance, umsatz * 100.0 / (SELECT SUM(umsatz) FROM `index`) AS prio FROM `index`""")
     users = cur.fetchall()
-    cur = db.execute('SELECT substr(datetime,0,11) as date, to_name as name FROM stats WHERE valuable_id != 1 AND to_id != 4 LIMIT 999,1')
-    purchase = cur.fetchone()
+    cur = db.execute("""SELECT "main"."stats".to_id as ID, "main"."stats".to_name as name, COUNT("main"."stats".to_name) as counter, user.start_semester FROM "main"."stats"
+                        INNER JOIN user
+                        ON "main"."stats".to_id = user.account_id
+                        WHERE datetime >= date('now','-1 month')
+                        AND datetime <= date('now')
+                        AND "from_id" LIKE '3'
+                        AND "valuable_name" LIKE '%Bier%'
+                        GROUP BY to_name
+                        ORDER BY COUNT(to_name) DESC
+                        LIMIT 1; """)    
+    bier = cur.fetchone()
 
-    return render_template('admin_start.html', title="Benutzerübersicht", admin_panel=True, users=users, purchase=purchase)
+    return render_template('admin_start.html', title="Benutzerübersicht", admin_panel=True, users=users, bier=bier)
 
 @app.route('/admin/lager', methods=['GET'])
 @basic_auth.required
@@ -167,7 +188,7 @@ def admin_lieferung():
     if request.method == 'POST':
         for v in valuable:
             modified_value = int(request.form[v['valuable_name']])
-            if modified_value is not 0:
+            if modified_value != 0:
                 modified_value = modified_value + v['balance']
                 # generate transaction
                 cur.execute('INSERT INTO `transaction` (comment, datetime) VALUES (?, ?)', ['Einzahlung Lieferung', datetime.now()])
@@ -453,7 +474,7 @@ def edit_userprofile(username):
             'SELECT * FROM stats WHERE from_id = ? OR to_id = ? LIMIT 25',
             [user['account_id'], user['account_id']])
         transactions = cur.fetchall()
-        return render_template('user_profile.html', title="Benutzerprofil " + user['name'], user=user, transactions=transactions, balance=balance, return_to_userpage=True)
+        return render_template('user_profile.html', title="Benutzerprofil " + user['name'], user=user, transactions=transactions, balance=balance, return_to_userpage=True, year=datetime.now().year)
     else:  # request.method == 'POST':
         if not user['allow_edit_profile']:
             abort(403)
@@ -517,7 +538,7 @@ def activate_user():
 @app.route('/user/add', methods=['POST', 'GET'])
 def add_user(): # check for user name already taken bevor pusing into db
     if request.method == 'GET':
-        return render_template('add_user.html', title="Benutzer hinzufügen", admin_panel=True)
+        return render_template('add_user.html', title="Benutzer hinzufügen", admin_panel=True, year=datetime.now().year)
     else:  # request.method == 'POST'
         db = get_db()
         cur = db.cursor()
@@ -564,7 +585,7 @@ def add_user(): # check for user name already taken bevor pusing into db
         except sqlite3.IntegrityError:
             flash(u'Diese Nutzername existiert bereits, bitte wähle einen anderen!')
 			
-            return render_template('add_user.html', title="Benutzer hinzufügen", admin_panel=True)
+            return render_template('add_user.html', title="Benutzer hinzufügen", admin_panel=True, year=datetime.datetime.now().year)
             
 
 @app.route('/user/<username>/add', methods=['POST'])
