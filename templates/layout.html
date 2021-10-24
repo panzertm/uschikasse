@@ -14,12 +14,12 @@
 <h1>
   <table class="header" style="width:100%;table-layout:fixed">
     <tr>
-      <td style="width:60%">{{ title }}:</td>
-      <td style="width:50%;text-align:right;white-space:nowrap;text-overflow:ellipsis;">
+      <td style="width:40%">{{ title }}:</td>
+      <td style="width:45%;text-align:right;white-space:nowrap;text-overflow:ellipsis;">
 		<!-- Bierkönig des Monats -->
-		{% if bier %} Bierkapitän: {{ bier.name }} ({{bier.start_semester}}) mit {{ bier.counter }} Bier! {% endif %}
+		{% if bier %} Bierkapitän: {{ bier.name }} ({{bier.start_semester}}) mit {{ bier.counter }} Bier🍻 {% endif %}
       </td>
-      <td style="width:5%"></td>
+      <td style="width:15%"></td>
     </tr>
   </table>
 </h1>
@@ -56,7 +56,7 @@
 </div>
 
 {% for message in get_flashed_messages() %}
-    <div class="flash">{{ message }}</div>
+    <div class="flash hideMe">{{ message }}</div>
 {% endfor %}
 
 {% block body %}Nichts zu sehen.{% endblock %}
