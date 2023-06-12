@@ -1,5 +1,5 @@
-# FG-VIng - Getränkekasse
-This is a fork of the neat fsikasse. Mainly it was optimised for the use case of the "Fachgruppe Verkehrsingenieurwesen" at the University of Stuttgart.
+# FG-Uschi - Getränkekasse
+This is a fork of the neat fsikasse. Mainly it was optimised for the use case of the "Fachgruppe Umweltschutztechnik" at the University of Stuttgart. Readme will be updated soon, as there are some updates to the repo itself.
 
 ## Description
 
